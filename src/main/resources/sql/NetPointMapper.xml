@@ -11,7 +11,7 @@
 				from zdsj2							
 				) temp
 			group by year,branchName,branchAddress
-			order by year asc				
+			order by year asc,terminalAmount desc				
 		]]>
 	</select>
 	<!-- 统计网点的工作状态:网点的所有终端在一天里面有记录就算正常工作
@@ -19,10 +19,13 @@
 	-->
 	<select id="selectWorkState" resultType="org.scut.mychart.model.NetPointModel" useCache="true">
 		<![CDATA[
-			select distinct DATE_FORMAT(operation_time, '%Y-%m-%d') as date,branch_name as branchName,branch_address as branchAddress,count(*) as work				
-			from zdsj2
-			group by date,branchName,branchAddress
-			order by date asc
+			select YEAR(temp.d) as year,temp.branchName,temp.branchAddress,count(*) as work
+			from(
+				select distinct TO_DATE(operation_time) as d,branch_name as branchName,branch_address as branchAddress				
+				from zdsj2
+				) temp
+			group by year,branchName,branchAddress		
+			order by year asc,work desc
 		]]>
 	</select>
 	
@@ -34,7 +37,7 @@
 				from zdsj2
 				) temp
 			group by year,branchName,branchAddress
-			order by year asc	
+			order by year asc,operationAmount desc	
 		]]>
 	</select>
 </mapper>

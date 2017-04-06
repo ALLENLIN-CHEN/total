@@ -11,13 +11,23 @@ var geoCoordMap = {
         "安陆县人社局社保大厅1楼":[113.710178,31.259925],
         "汉川县人社局社保大厅1楼":[113.838694,30.655972]       
 };
+var geoCoordData;    
 
 var option;
 var years = [];
 
 var convertData = function (data) {
     var res = [];
-    for (var i = 0; i < data.length; i++) {
+    for(var idx = 0;idx < geoCoordData.length; idx++){
+        console.log(geoCoordData[idx]);
+    }
+    for (var i = 0; i < data.length; i++) {        
+        // console.log(geoCoordData);
+        // var geoCoord = geoCoordData[i].data;
+        // console.log(geoCoord);
+        // var temp = geoCoordData.pop();
+        // console.log(temp);
+        // var geoCoord = temp.data;
         var geoCoord = geoCoordMap[data[i].name];
         if (geoCoord) {
             res.push({
@@ -37,11 +47,12 @@ var convertData = function (data) {
 var convertData2 = function(data){
     var res = [];
     for (var i = 0; i < data.length; i++) {
-        var geoCoord = geoCoordMap[data[i].name];
+        var geoCoord = geoCoordMap[data[i].name];        
+        console.log(geoCoord);
         if (geoCoord) {
             res.push({
                 name: '网点名称：'+data[i].name,                
-                value: geoCoord.concat(data[i].value),
+                value: geoCoord.concat(data[i].work),
                 tooltip:{
                     trigger:'item',
                     formatter:'网点名称：'+data[i].name+'<br/>网点地址：'+data[i].address
@@ -54,6 +65,25 @@ var convertData2 = function(data){
     return res;
 }
 
+//根据地址查找经纬度
+function getCoorByAddress(address) {　　    
+    var token = "clR7lmWlaguV9WUYKM7OGMbj";     //密钥
+    var url = 'http://api.map.baidu.com/geocoder/v2/?output=json&ak='+token+'&address='; //请求URL，返回json
+    if(address){
+        $.getJSON(url+address+'&callback=?',function(res){
+            if(res.status === 0){       //正常获取了数据
+                var loc = res.result.location;
+                geoCoordData.push({
+                    name:address,
+                    data:[loc.lng,loc.lat]
+                });                                                                
+            }else{
+                alert('no place')
+            }
+        });
+    }
+}
+
 function getMap(data){                              //data有年份，网点名称，网点地址，终端数量
     var timeLineOptions = [];    
     // 年份        
@@ -62,12 +92,13 @@ function getMap(data){                              //data有年份，网点名�
         var categoryData = [];
         var barData = [];                
         var dataItem = data[years[i]];        
-        dataItem.sort(function (a, b) {
-            return b.value - a.value;
-        });
+        geoCoordData = new Array();        
         for(var j=dataItem.length-1;j>=0;j--){   //获取某一年的网点所对应的终端数，年份应该升序排好序        
+            var name = dataItem[j].address;
             categoryData.push(j+1+": "+dataItem[j].name);
-            barData.push(dataItem[j].value);            
+            barData.push(dataItem[j].value);                   
+            getCoorByAddress(dataItem[j].address);
+            console.log(geoCoordData.length);
         }            
         timeLineOptions.push({
             title:{
@@ -304,12 +335,12 @@ function getMap(data){                              //data有年份，网点名�
 }
 
 function getBar(data){    
-    var timeLineOptions = [];  
+    var timeLineOptions = [];    
     // 年份        
-    years = data.years;           
-    for(var i=0;i<years.length;i++){        
-        var dataItem = data.get(years[i]);        
-        dataItem = data[i].sort(function(a,b){
+    years = data.years;     
+    for(var i=0;i<years.length;i++) {        
+        var dataItem = data[years[i]];          
+        dataItem = dataItem.sort(function(a,b){
             return a.work - b.work;
         });        
         var categoryData = [];
@@ -480,7 +511,7 @@ function getBar(data){
                     type: 'effectScatter',
                     coordinateSystem: 'geo',                    
                     symbolSize: function (val) {
-                        return Math.max(val[2] / 30, 6);             
+                        return Math.max(val[2] / 30, 8);             
                     },
                     showEffectOn: 'emphasis',
                     rippleEffect: {
@@ -517,11 +548,11 @@ function getBar(data){
                     name:'正常工作天数',
                     type:'bar',
                     stack:'总量',                 //数据堆叠，同个类目轴上系列配置相同的stack值可以堆叠放置。
-                    barMaxWidth:'35',
+                    // barMaxWidth:'35',
                     bargap:'10%',
                     itemStyle: {
                         "normal": {
-                            "color": "rgba(255,144,128,1)",
+                            "color": "rgba(0,191,183,1)",
                             "barBorderRadius": 2,
                             "label": {
                                 "show": true,
@@ -539,10 +570,11 @@ function getBar(data){
                     "name": "异常工作天数",
                     "type": "bar",
                     "stack": "总量",
+                    // barMaxWidth:'35',
                     bargap:'10%',
                     "itemStyle": {
                         "normal": {
-                            "color": "rgba(0,191,183,1)",
+                            "color": "rgba(255,144,128,1)",
                             "barBorderRadius": 2,
                             "label": {
                                 "show": true,
@@ -566,9 +598,9 @@ function getLine(data){
     years = data.years;     
     for(var i=0;i<years.length;i++){        
         var dataItem = data[years[i]];
-        dataItem = dataItem.sort(function(a,b){
-            return b.value - a.value;
-        });        
+        // dataItem = dataItem.sort(function(a,b){
+        //     return b.value - a.value;
+        // });        
         var categoryData = [];
         var operationData = [];
         for(var j=0;j<dataItem.length;j++){
@@ -584,8 +616,6 @@ function getLine(data){
             },
             tooltip : [{
                 trigger:'axis',                                  
-                // formatter:'网点名称：'+dataItem[i].name+'<br/>网点地址：'+dataItem[i].name
-                //              +'<br/>业务量：'+dataItem[i].value                             //对该点进行个性化设置  
                 formatter:function(params){                
                     return '网点名称：'+dataItem[i].name+'<br/>网点地址：'+dataItem[i].name
                             +'<br/>业务量：'+dataItem[i].value;                             //对该点进行个性化设置  
@@ -600,18 +630,13 @@ function getLine(data){
                     }
                 },  
                 data: operationData
-            },{   
-                animationType: 'scale',
-                animationEasing: 'elasticOut',
-                animationDelay: function(idx) {
-                    return Math.random() * 200;
-                },  
+            },{                   
                 label: {
                     normal: {
                         show: true,
                         position:'outside',
                         formatter:function(params){
-                            return "Top"+params.dataIndex+" "+params.percent+'%';
+                            return "Top"+(params.dataIndex+1)+" "+params.percent+'%';
                         }                      
                     }
                 },             
@@ -676,7 +701,7 @@ function getLine(data){
             },{
                 id:'pie',
                 text: '网点业务量占全市比重',
-                left:'62%',                
+                left:'61%',                
                 top: '7%',
                 textStyle: {
                     color: 'black',
@@ -725,4 +750,166 @@ function getLine(data){
         options:timeLineOptions
     };
     return option;        
+}
+
+function getTotal(data){
+    var timeLineOptions = [];
+     // 年份        
+    years = data.years;     
+    for(var i=0;i<years.length;i++){        
+        var dataItem = data[years[i]];
+        // dataItem = dataItem.sort(function(a,b){
+        //     return b.value - a.value;
+        // });        
+        var categoryData = [];                           //获取网点名称
+        var operationData = [];                         //获取业务量
+        var barWorkData = [];
+        var barNotWorkData = [];
+        for(var j=0;j<dataItem.length;j++){
+            categoryData.push(dataItem[j].name);     
+            operationData.push(dataItem[j].value);      
+        }                        
+        timeLineOptions.push({
+            title:{
+                text:years[i]+"年孝感市社保网点分布情况",                
+            },
+            xAxis:{
+                data:categoryData
+            },
+            tooltip : [{
+                trigger:'axis',                                  
+                formatter:function(params){                
+                    return '网点名称：'+dataItem[i].name+'<br/>网点地址：'+dataItem[i].name
+                            +'<br/>业务量：'+dataItem[i].value;                             //对该点进行个性化设置  
+                }
+            }],
+            series:[{
+                id: 'line',
+                label: {
+                    normal: {
+                        show: true,
+                        position: 'top'
+                    }
+                },  
+                data: operationData
+            },{                   
+                label: {
+                    normal: {
+                        show: true,
+                        position:'outside',
+                        formatter:function(params){
+                            return "Top"+(params.dataIndex+1)+" "+params.percent+'%';
+                        }                      
+                    }
+                },             
+                data:dataItem           
+            }
+            ]
+        });
+    }    
+    option = {
+        baseOption: {
+            timeline: {
+                axisType: 'category',
+                orient: 'horizontal',
+                autoPlay: true,
+                inverse: false,
+                playInterval: 3000,     
+                left:'center',
+                bottom:'1%',
+                width:'50%',
+                label: {
+                    position:'bottom',
+                    normal: {
+                        textStyle: {
+                            color: '#666'
+                        }                    
+                    },
+                    emphasis: {
+                        textStyle: {
+                            color: 'red'
+                        }
+                    }
+                },
+                symbol: 'none',
+                lineStyle: {
+                    color: '#666'
+                },
+                checkpointStyle: {
+                    color: '#bbb',
+                    borderColor: '#777',
+                    borderWidth: 2
+                },
+                controlStyle: {
+                    showNextBtn: false,
+                    showPrevBtn: false,
+                    normal: {
+                        color: '#666',
+                        borderColor: '#666'
+                    },
+                    emphasis: {
+                        color: '#aaa',
+                        borderColor: '#aaa'
+                    }
+                },
+                data:years
+            },
+            title:[{                
+                left:'left',
+                textStyle: {
+                    color: 'black',
+                    fontSize: '22'                    
+                }                
+            },{
+                id:'pie',
+                text: '网点业务量占全市比重',
+                left:'61%',                
+                top: '7%',
+                textStyle: {
+                    color: 'black',
+                    fontSize:'15'
+                }
+            }],                            
+            calculable : true,
+            grid: {
+                top: 80,
+                bottom: 100
+            },
+            xAxis: [
+                {
+                    'type':'category',
+                    'axisLabel':{
+                        'interval':0,
+                        'rotate':10
+                    },                    
+                    splitLine: {show: false}
+                }
+            ],
+            yAxis: [
+                {
+                    name:'业务量',
+                    type: 'value',                                    
+                    //max: 3000                                
+                }
+            ],
+            series: [                
+                {id:'line', type: 'line'},
+                {
+                    id:'pie',                                    
+                    type: 'pie',
+                    radius : '30%',
+                    center: ['70%', '30%'],
+                    itemStyle: {
+                        emphasis: {
+                            shadowBlur: 10,
+                            shadowOffsetX: 0,
+                            shadowColor: 'rgba(0, 0, 0, 0.5)'
+                        }
+                    }                                   
+                }
+            ]
+        },
+        options:timeLineOptions
+    };
+    return option;
 }

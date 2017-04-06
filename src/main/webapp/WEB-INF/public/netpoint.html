@@ -42,6 +42,8 @@
 <script type="text/javascript" src="js/npcharts.js"></script>
 <script type="text/javascript" src="js/netpoint.js"></script>
 <script src="js/xiaogan.js"></script>
+<!-- 将百度地图API引入，设置好自己的key -->  
+<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=7a6QKaIilZftIMmKGAFLG7QT1GLfIncg"></script>  
 
 </head>
 <body>
@@ -96,24 +98,20 @@
 			<div class="item active" data-id="theme1" data-index="1">
 				<label>用卡次数与区域资源的关系分析</label>
 			</div>
-			<div class="sub-1 sub-item" style="display: block;">
-				<div id="distribute" class="sub-item-wrap">
-					<i class="icon"></i>
-					<div class="type" data-url="charts/netpoint/getTerminalAmount">社保网点分布</div>
-				</div>
-			</div>
-			<div class="sub-1 sub-item" style="display: block;">
-				<div id="state" class="sub-item-wrap">
-					<i class="icon"></i>
-					<div class="type" data-url="#">社保网点状态</div>
-				</div>
-			</div>
-			<div class="sub-1 sub-item" style="display: block;">
-				<div id="use" class="sub-item-wrap">
-					<i class="icon"></i>
-					<div class="type" data-url="#">网点终端使用情况</div>
-				</div>
-			</div>
+			<div class="sub-1 sub-item" style="display:block;">
+					<div class="sub-item-wrap">
+						<i class="icon"></i>
+						<div id="distribute" class="type" data-url="#">社保网点分布</div>
+					</div>
+					<div class="sub-item-wrap">
+						<i class="icon"></i>
+						<div id="state" class="type" data-url="#">社保网点状态</div>
+					</div>
+					<div class="sub-item-wrap">
+						<i class="icon"></i>
+						<div id="use" class="type" data-url="#">网点终端使用情况</div>
+					</div>								
+			</div>			
 		</div>		
 
 		<!-- 图表展示与控制容器 -->
@@ -148,6 +146,7 @@
             <div class="single">            
 			     <div id="chartMain"></div>
             </div>
+            <div id="allmap"></div>
 		</div>
 
 		<div class="spinner">

@@ -1,19 +1,18 @@
 package org.scut.mychart.model;
 
 public class NetPointModel {
-	// 统计的年份
 	private String year;
-	// 网点名称
+	
 	private String branchName;
-	// 网点地址
+	
 	private String branchAddress;
-	// 网点终端数量
+	
 	private Integer terminalAmount;
-	// 正常工作天数
+	
 	private Integer work;
-	// 异常工作天数
+	
 	private Integer notWork;
-	// 业务量
+	
 	private Integer operationAmount;
 	
 	public String getYear() {
