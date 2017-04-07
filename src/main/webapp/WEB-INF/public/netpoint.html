@@ -37,13 +37,11 @@
     <script type="text/javascript" src="js/analysis7.js"></script>
     <script type="text/javascript" src="js/analysis8.js"></script>
 
-<!-- 引入 ECharts 文件 -->
-<script src="js/echarts3/echarts.js"></script>
-<script type="text/javascript" src="js/npcharts.js"></script>
-<script type="text/javascript" src="js/netpoint.js"></script>
-<script src="js/xiaogan.js"></script>
-<!-- 将百度地图API引入，设置好自己的key -->  
-<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=7a6QKaIilZftIMmKGAFLG7QT1GLfIncg"></script>  
+	<!-- 引入 ECharts 文件 -->
+	<script src="js/echarts3/echarts.js"></script>
+	<script type="text/javascript" src="js/npcharts.js"></script>
+	<script type="text/javascript" src="js/netpoint.js"></script>
+	<script src="js/xiaogan.js"></script>
 
 </head>
 <body>
@@ -101,52 +99,27 @@
 			<div class="sub-1 sub-item" style="display:block;">
 					<div class="sub-item-wrap">
 						<i class="icon"></i>
-						<div id="distribute" class="type" data-url="#">社保网点分布</div>
+						<div id="distribute" class="type" data-url="charts/netpoint/getTerminalAmount" 
+								data-type="npdistribute">社保网点分布</div>
 					</div>
 					<div class="sub-item-wrap">
 						<i class="icon"></i>
-						<div id="state" class="type" data-url="#">社保网点状态</div>
+						<div id="state" class="type" data-url="charts/netpoint/getWorkState" 
+								data-type="npstate">社保网点状态</div>
 					</div>
 					<div class="sub-item-wrap">
 						<i class="icon"></i>
-						<div id="use" class="type" data-url="#">网点终端使用情况</div>
+						<div id="use" class="type" data-url="charts/netpoint/getOperationAmount" 
+								data-type="npuse">网点终端使用情况</div>
 					</div>								
 			</div>			
 		</div>		
 
 		<!-- 图表展示与控制容器 -->
-		<div class="right-content">
-			<div class="time_wrap">
-					<div class="form-group clearfix">
-						<label class="control-label col-md-2">起始时间</label>
-						<div class="col-md-2">
-							<select class="form-control startTime">
-							  <option value="2010">2010年</option>
-							  <option value="2011">2011年</option>
-							  <option value="2012">2012年</option>
-							  <option value="2013">2013年</option>
-							  <option value="2014">2014年</option>
-							  <option value="2015">2015年</option>
-							</select>
-						</div>
-						<label class="control-label col-md-2">结束时间</label>
-						<div class="col-md-2">
-							<select class="form-control endTime">
-							  <option value="2010">2010年</option>
-							  <option value="2011">2011年</option>
-							  <option value="2012">2012年</option>
-							  <option value="2013">2013年</option>
-							  <option value="2014">2014年</option>
-							  <option value="2015">2015年</option>
-							</select>
-						</div>
-						<button type="button" class="btn btn-primary col-md-2 search">搜索</button>
-					</div>
-			</div>
+		<div class="right-content">			
             <div class="single">            
 			     <div id="chartMain"></div>
-            </div>
-            <div id="allmap"></div>
+            </div>            
 		</div>
 
 		<div class="spinner">

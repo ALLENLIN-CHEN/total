@@ -18,7 +18,7 @@ var geoCoordData;
 
 var convertData = function (data) {
     var res = [];            
-    console.log(geoCoordData);
+    // console.log(geoCoordData);
     for (var i = 0; i < data.length; i++) {                
         //var geoCoord = geoCoordData[data[i].name];                  
         var geoCoord = geoCoordMap[data[i].name];
