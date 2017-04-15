@@ -450,23 +450,23 @@ function getTerminalTypeMix(res) {
 	var timeLineOptions = [];
 	var yearlist=[];
 	// data.yearlist=[2010,2011,2012,2013,2014,2015];
-	var fakenos=['自助终端','德生宝','M13','M4','M24D','M21DK','TSW-F4 M46DK','M32DK','M32D','M21'];
+	// var fakenos=['自助终端','德生宝','M13','M4','M24D','M21DK','TSW-F4 M46DK','M32DK','M32D','M21'];
 	// console.log(data);
 	for(var index in data.yearlist) {
 		var terminalModellist=data.datamap[data.yearlist[index]];
 		var categorylist=[],datalist=[];
 		var sum=0;
-		for(var i = 0; i < fakenos.length; i++) {
-		// for(var i = 0; i < terminalModellist.length; i++) {
+		// for(var i = 0; i < fakenos.length; i++) {
+		for(var i = 0; i < terminalModellist.length; i++) {
 			if(i<10) {
-				categorylist.push(fakenos[i]);
-				datalist.push(Math.round(Math.random()*(9-1)+1));
-				// categorylist.push(terminalModellist[i].category);
-				// datalist.push(terminalModellist[i].value);
+				// categorylist.push(fakenos[i]);
+				// datalist.push(Math.round(Math.random()*(9-1)+1));
+				categorylist.push(terminalModellist[i].category);
+				datalist.push(terminalModellist[i].value);
 				sum+=datalist[i];
 			}else break;
 		}
-		datalist=datalist.sort(function (x,y) {return y-x;});
+		// datalist=datalist.sort(function (x,y) {return y-x;});
 		var _max = Math.max.apply(null, datalist).toFixed(0) - 0;
 		var spNum = _max+1;
 		while (_max % spNum != 0){
@@ -494,18 +494,47 @@ function getTerminalTypeMix(res) {
 						fontWeight:'lighter',
 						color: 'gray'
 					}
-				},
+				}
+			],
+			graphic: [
 				{
-					text: '全市终端共'+sum+'台，包括'+datalist.length+'种类型'+'\n' +
-					'类型数量前三分别为：\n1.'+categorylist[0]+'('+datalist[0]+'台)'+'2.'+categorylist[1]+'('+datalist[1]+'台)'+'3.'+categorylist[2]+'('+datalist[2]+'台)',
-					top:'7%',
-					left:'3%',
-					textBaseline:'middle',
-					textStyle: {
-						// fontSize: 30,
-						fontWeight:'lighter',
-						color: 'gray'
-					}
+					type: 'group',
+					// rotation: Math.PI / 4,
+					bounding: 'raw',
+					left: '3%',
+					top: '4%',
+					z: 100,
+					children: [
+						{
+							type: 'rect',
+							z: 100,
+							shape: {
+								width: 400,
+								height: 65
+							},
+							style: {
+								fill: 'rgba(0,0,0,0.3)',
+								// stroke: '#555',
+								lineWidth: 2,
+								shadowBlur: 8,
+								shadowOffsetX: 3,
+								shadowOffsetY: 3,
+								shadowColor: 'rgba(0,0,0,0.3)'
+							}
+						},
+						{
+							type: 'text',
+							left: 'left',
+							top: '7%',
+							z: 100,
+							style: {
+								fill: '#fff',
+								text: '全市终端共'+sum+'台，包括'+datalist.length+'种类型'+'\n' +
+								'类型数量前三分别为：\n1.'+categorylist[0]+' ('+datalist[0]+'台)'+'  2.'+categorylist[1]+' ('+datalist[1]+'台)'+'  3.'+categorylist[2]+' ('+datalist[2]+'台)',
+								font: '16px Microsoft YaHei'
+							}
+						}
+					]
 				}
 			],
 				legend: [

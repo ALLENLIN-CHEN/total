@@ -4,21 +4,21 @@
 	<!-- 开启二级缓存 -->
 	<cache size="1024" readOnly="true" />
 	<select id="selectTerminalType" resultType="org.scut.mychart.model.TerminalModel" statementType="STATEMENT">
-		select year(operation_time) as "year",device_type as "category",count(distinct terminal_no) as "value"
+		select year(operation_time) as "year",device_info as "category",count(distinct terminal_no) as "value"
 		from zdsj2
-		group by year,device_type
+		group by year,device_info
 		order by year,value desc
 	</select>
 	<select id="selectTerminalStatus" resultType="org.scut.mychart.model.TerminalModel" statementType="STATEMENT">
-		select year(operation_time) as "year",terminal_no as "category",branch_name,device_type,count(distinct operation_time) as "value"
+		select year(operation_time) as "year",terminal_no as "category",branch_name,device_info as "device_type",count(distinct operation_time) as "value"
 		from zdsj2
-		group by year,terminal_no,branch_name,device_type
+		group by year,terminal_no,branch_name,device_info
 		order by year,value desc
 	</select>
 	<select id="selectTerminalBusiness" resultType="org.scut.mychart.model.TerminalModel" statementType="STATEMENT">
-		select year(operation_time) as "year",terminal_no as "category",branch_name,device_type,count(*) as "value"
+		select year(operation_time) as "year",terminal_no as "category",branch_name,device_info as "device_type",count(*) as "value"
 		from zdsj2
-		group by year,terminal_no,branch_name,device_type
+		group by year,terminal_no,branch_name,device_info
 		order by year,value desc
 	</select>
 </mapper>
