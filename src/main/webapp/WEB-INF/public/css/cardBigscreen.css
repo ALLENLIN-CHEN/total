@@ -19,10 +19,10 @@ body{
 	height: 1080px;	 
 	position: absolute;
 	
-	background-image:url('../images/cardBackground.jpg'); 
+	background-image:url('../images/starts.png'); 
 	background-size:100% 100%;
 	
-	border:3px solid black;
+	/*border:3px solid black;*/
 }
 
 .theme {
@@ -198,7 +198,7 @@ body{
 }
 
 .chart1-conclusion{	
-	top:85px;
+	top:86px;
 	left: 23px;
 }
 .chart2-conclusion{

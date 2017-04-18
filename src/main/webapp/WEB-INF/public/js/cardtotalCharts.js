@@ -143,10 +143,6 @@ function getChart1(data){
                 axisTick:{
                     show:false
                 }                   
-            },            
-            tooltip : {
-                show:false,
-                trigger: 'item'                            
             },
             series:[{
                 type:'line'
@@ -260,16 +256,7 @@ function getChart2(data){
                 axisLine: {show: false},
                 axisTick: {show: false},
                 axisLabel: {show:true,margin: 2, textStyle: {color: 'white'}} 
-            }],            
-            tooltip:{
-                type:'axis',
-                axisPointer: {
-                    type: "shadow",
-                    textStyle: {
-                        color: "black"
-                    }
-                }
-            },            
+            }],                        
             series:[{
                     name:'正常',
                     type:'bar',
