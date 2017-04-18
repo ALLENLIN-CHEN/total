@@ -1,5 +1,6 @@
 var myChart = new Array(7);
 var option;
+var urls = ['','','','','','','charts/terminal/getStatusOption'];		//获取数据的REST风格URL
 var years = ['2010','2011','2012','2013','2014','2015'];					//年份
 
 var netpoint = ['孝感市人社局社保大厅1楼','云梦县人社局社保大厅1楼','大悟县人社局三楼','孝南区人社局社保大厅1楼','孝昌县人社局社保大厅1楼',
@@ -22,7 +23,7 @@ var type6 = ['055214DF000005B0','0554AD16000003E9','0554AEEC00001D52','0554AF3B0
 var chart6YearData = [];
 var chart6Data = [];
 
-var type7 = ['手机app','德生宝','微信','自助终端','网上办事大厅'];
+var type7 = ['M13','德生宝','M4','M32D','M21DK','TSW-F4 M46DK','自助终端','M24D','M23',' M32DK'];
 var chart7YearData = [];
 var chart7Data = [];
 
@@ -58,16 +59,15 @@ $(document).ready(function(){
 			var idx = Math.floor(Math.random()*6);					
 			var record6 = {name:type6[j],address:address[idx],value:val6};
 			chart6YearData.push(record6);		
-
+			
+			var val7 = Math.floor(Math.random()*10000000);
+			var record7 = {name:type7[j],value:val7};
+			chart7YearData.push(record7);
+			
 			var val8_notWork = Math.floor(Math.random()*100);
 			var val8_work = 365 - val8_notWork;
 			chart8YearData.push({name:type8[j],address:address[idx],work:val8_work,notWork:val8_notWork});	
-		}		
-		for(var k=0;k<5;k++){			
-			var val7 = Math.floor(Math.random()*10000000);
-			var record7 = {name:type7[k],value:val7};
-			chart7YearData.push(record7);
-		}
+		}				
 		sortData();
 		chart1Data.push(chart1YearData);
 		chart2Data.push(chart2YearData);
@@ -133,6 +133,10 @@ $(document).ready(function(){
 
 	
 });
+
+function getData(){
+
+}
 
 /**
 * 结论联动

@@ -786,10 +786,10 @@ function getChart7(data){
                 data:years
             },
             grid: {
-                top:'15%',
+                top:'13%',
                 left:'15%',                
                 width: '75%',
-                height:'85%'                
+                height:'86%'                
             },
             xAxis: [{
                 type: 'value',        
@@ -818,7 +818,8 @@ function getChart7(data){
                     id: 'bar',
                     zlevel: 2,
                     type: 'bar',   
-                    barWidth: 14,
+                    barWidth: 12,
+                    barGap:10,
                     itemStyle: {
                         normal: {
                             barBorderRadius: 20,
@@ -828,7 +829,7 @@ function getChart7(data){
                             "label": {
                                 "show": true,
                                 "textStyle": {
-                                    "color": "#fff"
+                                    "color": "white"
                                 },
                                 "position": "right",
                                 formatter: function(p) {
@@ -843,6 +844,8 @@ function getChart7(data){
                     type: 'bar',
                     silent: true,
                     yAxisIndex: 1,
+                    // barWidth:20,
+                    barGap:'200%',
                     itemStyle: {
                         normal: {
                             barBorderRadius: 20,
@@ -850,8 +853,7 @@ function getChart7(data){
                             borderWidth:2,
                             color: '#3ea0be'
                         }
-                    },
-                    barWidth: 24                   
+                    }                                
                 }
             ]
         },  
@@ -917,6 +919,9 @@ function getChart8(data) {
                     left: 'center',
                     top:'10%',
                     data: ['正常', '异常'],
+                    textStyle:{
+                        color:'#fff'
+                    }
                 }
             ],
             // tooltip : {
