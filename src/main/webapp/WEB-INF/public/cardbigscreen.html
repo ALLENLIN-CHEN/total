@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8"/>
+    <title>社保大数据业务平台</title>
+	<link rel="stylesheet" href="css/bootstrap.css">
+    <!-- Bootstrap core CSS -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom styles for this template -->
+    
+    <link rel="stylesheet" href="css/layout.css" type="text/css" media="screen" />
+    <!--[if lt IE 9]>
+    <link rel="stylesheet" href="css/ie.css" type="text/css" media="screen" />
+    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+        
+	<!-- 用于图表展示与控制样式 -->
+	<link href="css/cardBigscreen.css" rel="stylesheet">    
+
+    <script type="text/javascript" src="js/jquery.min.js"></script>
+    <script type="text/javascript" src="js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="js/mCustomScrollbar/jquery.mCustomScrollbar.concat.min.js"></script>
+    <script src="js/hideshow.js" type="text/javascript"></script>
+    <script src="js/jquery.tablesorter.min.js" type="text/javascript"></script>
+    <script type="text/javascript" src="js/jquery.equalHeight.js"></script>
+
+    <script type="text/javascript" src="js/analysis0.js"></script>
+    <script type="text/javascript" src="js/analysis1.js"></script>
+    <script type="text/javascript" src="js/analysis2.js"></script>
+    <script type="text/javascript" src="js/analysis3.js"></script>
+    <script type="text/javascript" src="js/analysis4.js"></script>
+    <script type="text/javascript" src="js/analysis5.js"></script>
+    <script type="text/javascript" src="js/analysis6.js"></script>
+    <script type="text/javascript" src="js/analysis7.js"></script>
+    <script type="text/javascript" src="js/analysis8.js"></script>
+    
+    <!-- 引入 ECharts 文件 -->
+	<script src="js/echarts3.4.0/echarts.js"></script>
+	<script type="text/javascript" src="js/cardtotalCharts.js"></script>
+	<script type="text/javascript" src="js/cardbigscreen.js"></script>	
+	<script src="js/xiaogan.js"></script>
+</head>
+<body>		
+	<div class="container-fluid">
+		<!-- 标题 -->
+		<div class="theme">
+			<div class="title">
+				<span id='year' class="year">2010</span> <span>年孝感市社保网点与终端分析</span>
+			</div>	
+		</div>
+		
+		<!-- 网点业务量top10 -->		
+		<div class="subTitle chart1-subTitle">网点业务量Top10</div>
+		<div class="conclusion chart1-conclusion">
+		<span style="padding-left:4em;">全 市 网 点：</span>
+		<span style="padding-left:2em;">总业务量</span><span id='opTotal' class="number"></span>&nbsp;&nbsp;&nbsp;&nbsp;
+		<span style="padding-left:2em;">平均业务量</span><span id='opAverage' class="number"></span>			
+		</div>
+		<div id='chart1' class="wrap wrap-chart1">		
+		</div>
+		
+		<!-- 网点工作状态 -->		
+		<div class="subTitle chart2-subTitle">网点工作状态Top10</div>
+		<div class="conclusion chart2-conclusion">
+		<span>正常Top1</span> <span id='worknp' class="address"></span>
+		<span id='work' class="number"></span> 天		
+		<span style="padding-left:1.5em;">异常Top1</span> <span id='notWorknp' class="address"></span>
+		<span id='notWork'  class="number"></span> 天
+		</div>
+		<div id='chart2' class="wrap wrap-chart2">			
+		</div>
+
+		<!-- 业务量占比 -->			
+		<div class="subTitle chart3-subTitle">网点业务量占比</div>
+		<div class="conclusion chart3-conclusion">
+			<span style="font-size:20px;padding-left: 0em;">Top1</span><span id="npName" class="address"></span><br>
+			<span>业务量 </span><span id="npOperation" class="number"></span>
+			<span style="padding-left: 2em;">占全市 </span><span id="npPercent" class="number"></span>
+		</div>	
+		<div id='chart3' class="wrap wrap-chart3">			
+		</div>	
+
+		<!-- 终端数量占比 -->
+		<div class="subTitle chart4-subTitle">网点终端数量占比</div>
+		<div class="conclusion chart4-conclusion">
+			<span style="font-size:20px;padding-left: 0em;">Top1</span><span id="npTerName" class="address"></span><br>
+			<span>终端数为 </span><span id="npTer" class="number"></span>
+			<span style="padding-left: 4em;">占全市的 </span><span id="npTerPercent" class="number"></span>
+		</div>	
+		<div id='chart4' class="wrap wrap-chart4">				
+		</div>
+
+		<!-- 地图 -->
+		<div class="conclusion chart5-conclusion">全市共有 <span id='npAmount' class="number"></span>个网点, 
+			共有 <span id='terminalAmount' class="number"></span> 台社保终端<br>
+			其中，<span id='maxTerminalnp' class="address"></span>	<br> 终端数量最多
+			有 <span id='maxTerminal' class="number"></span> 台,
+			业务量达<span id='maxOperation' class="number"></span>
+		</div>
+		<div id='chart5' class="wrap-chart5">
+		</div>
+
+		<!-- 终端类型top10 -->
+		<div class="subTitle chart6-subTitle">终端业务量Top10</div>
+		<div class="conclusion chart6-conclusion">
+			<span style="padding-left: 3em;">Top1终端：业务量  </span><span id='terminal_op' class="number"></span>
+			<span style="padding-left: 1em;">位于</span> <span id="terminal_loc" class="address"></span>
+		</div>		
+		<div id='chart6' class="wrap wrap-chart6">			
+		</div>
+
+		<!-- 终端业务量top10 -->
+		<div class="subTitle chart7-subTitle">终端类型Top10</div>
+		<div class="conclusion chart7-conclusion">
+			<span>Top1  </span><span id='type_top' class="address"></span>
+			<span> 数量 </span><span id="top" class="number"></span>
+			<span style="padding-left: 1em;">Low1  </span> <span id="type_low" class="address"></span>
+			<span> 数量 </span><span id="low" class="number"></span>
+		</div>		
+		<div id='chart7' class="wrap wrap-chart7">
+
+		</div>
+
+		<!-- 终端工作状态 -->
+		<div class="subTitle chart8-subTitle">终端工作状态Top10</div>
+		<div class="conclusion chart8-conclusion">
+		<span>异常终端Top1：异常工作 </span> <span id='notWork_num'  class="number"></span> 天
+		<span>，该终端位于 </span> <span id="terminal2_loc" class="address"></span>
+		</div>		
+		<div id='chart8' class="wrap wrap-chart8">
+		</div>
+	</div>
+	<!-- 加载动画 -->
+	<div class="spinner">
+		<div class="rect1"></div>
+		<div class="rect2"></div>
+		<div class="rect3"></div>
+		<div class="rect4"></div>
+		<div class="rect5"></div>
+	</div>
+</body>
+
+</html>
