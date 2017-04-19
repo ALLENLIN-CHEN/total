@@ -162,7 +162,7 @@ function getChart2(data){
         // var dataItem = data[years[i]];          
         var dataItem = data[i];
         dataItem = dataItem.sort(function(a,b){
-            return b.work - a.work;
+            return b.notWork - a.notWork;
         });        
         var categoryData = [];
         var barWorkData = [];
@@ -218,7 +218,7 @@ function getChart2(data){
                     color:'#fff',
                     fontSize:14
                 },
-                data:['正常','异常']
+                data:['异常','正常']
             },
             grid: {                
                 top:'20%',
@@ -321,7 +321,11 @@ function getChart3(data){
             categoryData.push(dataItem[j].name);
             barData.push(dataItem[j].value);                       
         }                            
-        timeLineOptions.push({          	                               
+        timeLineOptions.push({   
+            tooltip: {
+                trigger: 'item',
+                formatter: "{a} <br/>{b}: {c} ({d}%)"
+            },       	                               
             series :[{                   	               
                 label: {
                     normal: {
@@ -350,12 +354,7 @@ function getChart3(data){
             	right:'30%',
             	width:'100%',
             	height:'90%'
-            },           
-            tooltip: {
-                trigger: 'item',
-                formatter: "{a} <br/>{b}: {c} ({d}%)"
-            },
-            
+            },                               
             series: [
                 {
                     name:'业务量',
@@ -794,7 +793,7 @@ function getChart7(data){
             },
             grid: {
                 top:'13%',
-                left:'15%',                
+                left:'19.5%',                
                 width: '75%',
                 height:'86%'                
             },
@@ -892,7 +891,7 @@ function getChart8(data) {
         // var dataItem = data[years[i]];          
         var dataItem = data[i];
         dataItem = dataItem.sort(function(a,b){
-            return b.work - a.work;
+            return b.notWork - a.notWork;
         });        
         var categoryData = [];
         var barWorkData = [];

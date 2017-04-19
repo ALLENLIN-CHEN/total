@@ -43,8 +43,9 @@ $(document).ready(function(){
 		chart6YearData = [];
 		chart7YearData = [];
 		chart8YearData = [];		
+
 		for(var k=0;k<7;k++){
-			var val1= Math.floor(Math.random()*1000000);
+			var val1= Math.floor(Math.random()*10000)+5000;
 			var record1 = {name:netpoint[k],value:val1};
 			chart1YearData.push(record1);
 
@@ -52,7 +53,7 @@ $(document).ready(function(){
 			var val2_work = 365 - val2_notWork;
 			chart2YearData.push({name:netpoint[k],work:val2_work,notWork:val2_notWork});
 
-			var val5= Math.floor(Math.random()*4 + 1);
+			var val5= Math.floor(Math.random()*3) + 1;			
 			var record5 = {name:netpoint[k],address:address[k],value:val5};
 			chart5YearData.push(record5);			
 		}
@@ -62,7 +63,7 @@ $(document).ready(function(){
 			var record6 = {name:type6[j],address:address[idx],value:val6};
 			chart6YearData.push(record6);		
 			
-			var val7 = Math.floor(Math.random()*1000);
+			var val7 = Math.floor(Math.random()*3) + 1;			
 			var record7 = {name:type7[j],value:val7};
 			chart7YearData.push(record7);
 			
@@ -78,7 +79,7 @@ $(document).ready(function(){
 		chart7Data.push(chart7YearData);
 		chart8Data.push(chart8YearData);
 	}
-	
+	// getData();
 	hideLoading();	
 	// showLoading();
 	// 为所有ECharts图表准备有一定大小的DOM，初始化图表实例
@@ -135,7 +136,22 @@ $(document).ready(function(){
 });
 
 function getData(){
-
+	$.ajaxSetup({
+		async: false
+	});
+	$.ajax({
+		type: 'POST',
+		dataType: 'json',
+		url: urls[0],
+		async: false,
+		success: function(res) {
+			saveData1(res);
+		},
+		error: function() {
+			alert('获取数据错误');
+		}
+	});
+	// for(var i=0;i<)
 }
 
 /**
@@ -160,10 +176,10 @@ function setConclusions(param){
     var notWorknp = document.getElementById('notWorknp');
     var work = document.getElementById('work');    
     var notWork = document.getElementById('notWork');
-    worknp.innerHTML = chart2Data[idx][0].name;
-    notWorknp.innerHTML = chart2Data[idx][chart2Data[idx].length-1].name;
-    work.innerHTML = chart2Data[idx][0].work;
-    notWork.innerHTML = chart2Data[idx][chart2Data[0].length-1].notWork;
+    notWorknp.innerHTML = chart2Data[idx][0].name;
+    worknp.innerHTML = chart2Data[idx][chart2Data[idx].length-1].name;
+    notWork.innerHTML = chart2Data[idx][0].notWork;
+    work.innerHTML = chart2Data[idx][chart2Data[0].length-1].work;
 
     // set chart3 conclusions
     var npName = document.getElementById('npName');
@@ -212,8 +228,8 @@ function setConclusions(param){
     // set chart8 conclusions
     var notWork_ter = document.getElementById('terminal2_loc');
     var notWork_num = document.getElementById('notWork_num');
-    terminal2_loc.innerHTML = chart8Data[idx][chart8Data[idx].length-1].address;
-    notWork_num.innerHTML = chart8Data[idx][chart8Data[idx].length-1].notWork;
+    terminal2_loc.innerHTML = chart8Data[idx][0].address;
+    notWork_num.innerHTML = chart8Data[idx][0].notWork;
 }
     
 /**
@@ -234,10 +250,10 @@ function initConclusions(){
     var notWorknp = document.getElementById('notWorknp');
     var work = document.getElementById('work');    
     var notWork = document.getElementById('notWork');
-    worknp.innerHTML = chart2Data[0][0].name;
-    notWorknp.innerHTML = chart2Data[0][chart2Data[0].length-1].name;
-    work.innerHTML = chart2Data[0][0].work;
-    notWork.innerHTML = chart2Data[0][chart2Data[0].length-1].notWork;
+    notWorknp.innerHTML = chart2Data[0][0].name;
+    worknp.innerHTML = chart2Data[0][chart2Data[0].length-1].name;
+    notWork.innerHTML = chart2Data[0][0].work;
+    work.innerHTML = chart2Data[0][chart2Data[0].length-1].notWork;
 
     // init chart3 conclusions
     var npName = document.getElementById('npName');
@@ -285,14 +301,21 @@ function initConclusions(){
     // init chart8 conclusions
     var notWork_ter = document.getElementById('terminal2_loc');
     var notWork_num = document.getElementById('notWork_num');
-    terminal2_loc.innerHTML = chart8Data[0][chart8Data[0].length-1].address;
-    notWork_num.innerHTML = chart8Data[0][chart8Data[0].length-1].notWork;
+    terminal2_loc.innerHTML = chart8Data[0][0].address;
+    notWork_num.innerHTML = chart8Data[0][0].notWork;
 }              
 
-function sortData(){	
-	chart1YearData = chart1YearData.sort(function(a,b){
-		return b.value - a.value;
-	});		
+function saveData1(res){
+	years = data.years;  
+    for(var i=0;i<years.length;i++) {        
+        var dataItem = data[years[i]].sort(function(a,b){
+        	return b.value - a.value;
+        });          
+        chart1Data.push(dataItem);
+    }
+}
+
+function sortData(){		
 	chart2YearData = chart2YearData.sort(function(a,b){
 		return b.work - a.work;
 	});
@@ -306,7 +329,7 @@ function sortData(){
 		return b.value - a.value;
 	});
 	chart8YearData = chart8YearData.sort(function(a,b){
-		return b.value - a.value;
+		return b.notWork - a.notWork;
 	});
 }
 
