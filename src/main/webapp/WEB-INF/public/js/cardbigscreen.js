@@ -1,6 +1,8 @@
 var myChart = new Array(7);
 var option;
-var urls = ['','','','','','','charts/terminal/getStatusOption'];		//获取数据的REST风格URL
+//获取数据的REST风格URL，分别对应chart1,2,5,6,7,8
+var urls = ['charts/netpoint/getOperationAmount','charts/netpoint/getWorkState','charts/netpoint/getTerminalAmount',
+'charts/terminal/getBusinessOption','charts/terminal/getTypeOption','charts/terminal/getStatusOption'];		
 var years = ['2010','2011','2012','2013','2014','2015'];					//年份
 
 var netpoint = ['孝感市人社局社保大厅1楼','云梦县人社局社保大厅1楼','大悟县人社局三楼','孝南区人社局社保大厅1楼','孝昌县人社局社保大厅1楼',
@@ -42,7 +44,7 @@ $(document).ready(function(){
 		chart7YearData = [];
 		chart8YearData = [];		
 		for(var k=0;k<7;k++){
-			var val1= Math.floor(Math.random()*100000);
+			var val1= Math.floor(Math.random()*1000000);
 			var record1 = {name:netpoint[k],value:val1};
 			chart1YearData.push(record1);
 
@@ -55,12 +57,12 @@ $(document).ready(function(){
 			chart5YearData.push(record5);			
 		}
 		for(var j=0;j<10;j++){			
-			var val6= Math.floor(Math.random()*10000);
+			var val6= Math.floor(Math.random()*2000);
 			var idx = Math.floor(Math.random()*6);					
 			var record6 = {name:type6[j],address:address[idx],value:val6};
 			chart6YearData.push(record6);		
 			
-			var val7 = Math.floor(Math.random()*10000000);
+			var val7 = Math.floor(Math.random()*1000);
 			var record7 = {name:type7[j],value:val7};
 			chart7YearData.push(record7);
 			
@@ -129,9 +131,7 @@ $(document).ready(function(){
 	// 	}
 	// });
 
-	myChart[4].on('timelineChanged',setConclusions);
-
-	
+	myChart[4].on('timelineChanged',setConclusions);	
 });
 
 function getData(){
@@ -152,8 +152,8 @@ function setConclusions(param){
 	// set chart1 conclusions
 	var opTotal = document.getElementById('opTotal');
     var opAverage = document.getElementById('opAverage');
-    opTotal.innerHTML = sum(chart1Data[idx]);
-    opAverage.innerHTML = average(chart1Data[idx]);
+    opTotal.innerHTML = formatNum(sum(chart1Data[idx]));
+    opAverage.innerHTML = formatNum(average(chart1Data[idx]));
 
 	//set chart2 conclusions
 	var worknp = document.getElementById('worknp');
@@ -170,7 +170,7 @@ function setConclusions(param){
     var npOperation = document.getElementById('npOperation');
     var npPercent = document.getElementById('npPercent');   
     npName.innerHTML = chart1Data[idx][0].name; 
-    npOperation.innerHTML = chart1Data[idx][0].value;
+    npOperation.innerHTML = formatNum(chart1Data[idx][0].value);
     npPercent.innerHTML = ((chart1Data[idx][0].value / sum(chart1Data[idx])) * 100).toFixed(2) + '%';
 
     // set chart4 conclusions
@@ -178,7 +178,7 @@ function setConclusions(param){
     var npTer = document.getElementById('npTer');
     var npTerPercent = document.getElementById('npTerPercent');   
     npTerName.innerHTML = chart5Data[idx][0].name; 
-    npTer.innerHTML = chart5Data[idx][0].value; 
+    npTer.innerHTML = formatNum(chart5Data[idx][0].value); 
     npTerPercent.innerHTML = ((chart5Data[idx][0].value / sum(chart5Data[idx])) * 100).toFixed(2) + '%';
 
 	// set chart5 conclusions
@@ -188,15 +188,15 @@ function setConclusions(param){
     var maxTerminal = document.getElementById('maxTerminal');
     var maxOperation = document.getElementById('maxOperation');
     npAmount.innerHTML = netpoint.length;        
-    terminalAmount.innerHTML = sum(chart5Data[idx]);
+    terminalAmount.innerHTML = formatNum(sum(chart5Data[idx]));
     maxTerminalnp.innerHTML = chart5Data[idx][0].name;    
-    maxTerminal.innerHTML = chart5Data[idx][0].value;
-    maxOperation.innerHTML = getOperationByName(chart5Data[idx][0].name,chart1Data[idx]);
+    maxTerminal.innerHTML = formatNum(chart5Data[idx][0].value);
+    maxOperation.innerHTML = formatNum(getOperationByName(chart5Data[idx][0].name,chart1Data[idx]));
 
     // set chart6 conclusions
     var terminal_op = document.getElementById('terminal_op');
     var terminal_loc = document.getElementById('terminal_loc');
-    terminal_op.innerHTML = chart6Data[idx][chart6Data[idx].length-1].value;
+    terminal_op.innerHTML = formatNum(chart6Data[idx][chart6Data[idx].length-1].value);
     terminal_loc.innerHTML = chart6Data[idx][chart6Data[idx].length-1].address;
 
     // set chart7 conclusions
@@ -205,9 +205,9 @@ function setConclusions(param){
     var type_low = document.getElementById('type_low');
     var low = document.getElementById('low');
     type_top.innerHTML = chart7Data[idx][0].name;
-    top.innerHTML = chart7Data[idx][0].value;
+    top.innerHTML = formatNum(chart7Data[idx][0].value);
     type_low.innerHTML = chart7Data[idx][chart7Data[idx].length-1].name;
-    low.innerHTML = chart7Data[idx][chart7Data[idx].length-1].value;
+    low.innerHTML = formatNum(chart7Data[idx][chart7Data[idx].length-1].value);
 
     // set chart8 conclusions
     var notWork_ter = document.getElementById('terminal2_loc');
@@ -227,8 +227,8 @@ function initConclusions(){
 	//init chart1 conclusions
     var opTotal = document.getElementById('opTotal');
     var opAverage = document.getElementById('opAverage');
-    opTotal.innerHTML = sum(chart1Data[0]);
-    opAverage.innerHTML = average(chart1Data[0]);
+    opTotal.innerHTML = formatNum(sum(chart1Data[0]));
+    opAverage.innerHTML = formatNum(average(chart1Data[0]));
     //init chart2 conclusions
     var worknp = document.getElementById('worknp');
     var notWorknp = document.getElementById('notWorknp');
@@ -244,7 +244,7 @@ function initConclusions(){
     var npOperation = document.getElementById('npOperation');
     var npPercent = document.getElementById('npPercent');   
     npName.innerHTML = chart1Data[0][0].name; 
-    npOperation.innerHTML = chart1Data[0][0].value; 
+    npOperation.innerHTML = formatNum(chart1Data[0][0].value); 
     npPercent.innerHTML = ((chart1Data[0][0].value / sum(chart1Data[0])) * 100).toFixed(2) + '%';
     
     // init chart4 conclusions
@@ -261,15 +261,15 @@ function initConclusions(){
     var maxTerminalnp = document.getElementById('maxTerminalnp');
     var maxTerminal = document.getElementById('maxTerminal');
     npAmount.innerHTML = netpoint.length;        
-    terminalAmount.innerHTML = sum(chart5Data[0]);
+    terminalAmount.innerHTML = formatNum(sum(chart5Data[0]));
     maxTerminalnp.innerHTML = chart5Data[0][0].name;    
     maxTerminal.innerHTML = chart5Data[0][0].value;
-    maxOperation.innerHTML = getOperationByName(chart5Data[0][0].name,chart1Data[0]);
+    maxOperation.innerHTML = formatNum(getOperationByName(chart5Data[0][0].name,chart1Data[0]));
 
     // init chart6 conclusions
     var terminal_op = document.getElementById('terminal_op');
     var terminal_loc = document.getElementById('terminal_loc');
-    terminal_op.innerHTML = chart6Data[0][0].value;
+    terminal_op.innerHTML = formatNum(chart6Data[0][0].value);
     terminal_loc.innerHTML = chart6Data[0][0].address;
 
     // init chart7 conclusions
@@ -278,9 +278,10 @@ function initConclusions(){
     var type_low = document.getElementById('type_low');
     var low = document.getElementById('low');
     type_top.innerHTML = chart7Data[0][0].name;
-    top.innerHTML = chart7Data[0][0].value;
+    top.innerHTML = formatNum(chart7Data[0][0].value);
     type_low.innerHTML = chart7Data[0][chart7Data[0].length-1].name;
-    low.innerHTML = chart7Data[0][chart7Data[0].length-1].value;
+    low.innerHTML = formatNum(chart7Data[0][chart7Data[0].length-1].value);
+    
     // init chart8 conclusions
     var notWork_ter = document.getElementById('terminal2_loc');
     var notWork_num = document.getElementById('notWork_num');
@@ -319,6 +320,23 @@ function sum(data){
 function average(data){
 	var s = sum(data);
 	return Math.round(s / data.length);
+}
+
+function formatNum(num){
+	var result = '';
+	var arr = [];
+	while(num / 10 != 0){
+		var digit = num % 10;
+		num = Math.floor(num / 10);
+		arr.push(digit);
+	}
+	for(var i=0;i<arr.length;i++){
+		var digit = arr[i];
+		if(i % 3 == 0 && i != 0)
+			result = ',' + result;		
+		result = digit + result;	
+	}
+	return result;
 }
 
 function getOperationByName(name,data){

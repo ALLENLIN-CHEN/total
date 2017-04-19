@@ -260,9 +260,8 @@ function getChart2(data){
             series:[{
                     name:'正常',
                     type:'bar',
-                    stack:'总量',                 //数据堆叠，同个类目轴上系列配置相同的stack值可以堆叠放置。                    
-                    // bargap:'20%',       
-                    // barMaxWidth:'35',            
+                    stack:'总量',                 //数据堆叠，同个类目轴上系列配置相同的stack值可以堆叠放置。                                
+                    barWidth:50,
                     itemStyle: {
                         "normal": {
                             "color": "rgba(0,191,183,1)",
@@ -518,7 +517,7 @@ function getChart5(data){                              //data有年份，网点�
             geo: {
                 map: 'xiaogan',
                 top:'15%',                    
-                left:'30%',
+                left:'35%',
                 center: [114.11,31.031219],
                 roam: false,
                 zoom: 1.2,
@@ -851,7 +850,7 @@ function getChart7(data){
                             barBorderRadius: 20,
                             borderColor:'#fff',
                             borderWidth:2,
-                            color: '#3ea0be'
+                            color: '#050d3a'
                         }
                     }                                
                 }
@@ -1065,32 +1064,6 @@ function getChart8(data) {
             ],
             series: [
                 {
-                    name:'正常',
-                    type: 'bar',
-                    barGap: 40,
-                    barWidth:15,
-                    label: {
-                        normal: {
-                            show: true
-                        },
-                        emphasis: {
-                            show:true,
-                            position:'left',
-                            offset:[0,0],
-                            textStyle: {color: '#fff',fontSize: 14,},
-                        },
-                    },
-                    itemStyle: {
-                        normal: {
-                            color:'#659F83',
-                        },
-                        emphasis: {
-                            color:'#08C7AE',
-                        },
-                    },
-                    data: barWorkData,
-                },
-                {
                     name:'异常',
                     type: 'bar',
                     barGap: 40,
@@ -1118,6 +1091,32 @@ function getChart8(data) {
                     },
                     data:barNotWorkData
                 },
+                {
+                    name:'正常',
+                    type: 'bar',
+                    barGap: 40,
+                    barWidth:15,
+                    label: {
+                        normal: {
+                            show: true
+                        },
+                        emphasis: {
+                            show:true,
+                            position:'left',
+                            offset:[0,0],
+                            textStyle: {color: '#fff',fontSize: 14,},
+                        },
+                    },
+                    itemStyle: {
+                        normal: {
+                            color:'#659F83',
+                        },
+                        emphasis: {
+                            color:'#08C7AE',
+                        },
+                    },
+                    data: barWorkData                    
+                },
             ]
         });
     }
@@ -1129,13 +1128,13 @@ function getChart8(data) {
                 show:false,              
                 data:years
             },
-            tooltip : {
-                trigger: 'axis',
-                axisPointer : {            // 坐标轴指示器，坐标轴触发有效
-                    type : 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
-                },
-                // formatter: '<span style="display:inline-block;width:10px;height:10px;border-radius:50%;background-color:#5793f3;margin-right:5px;"></span>{a}<br/>{b} : {c}元'
-            },
+            // tooltip : {
+            //     trigger: 'axis',
+            //     axisPointer : {            // 坐标轴指示器，坐标轴触发有效
+            //         type : 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
+            //     },
+            //     // formatter: '<span style="display:inline-block;width:10px;height:10px;border-radius:50%;background-color:#5793f3;margin-right:5px;"></span>{a}<br/>{b} : {c}元'
+            // },
             yAxis : [
                 {
                     type : 'category',
