@@ -1,3 +1,5 @@
+var terminalTimeLineOptions;
+
 /**
  * 用于处理不同类型的图表
  */
@@ -12,11 +14,7 @@ function getCharts(data) {
 	} else if(data.type === 'terminalstatus') {
 		result.push(getTerminalStatusMix(data));
 	}
-	
-	    // result.push(getTerminalTypeMix(data));
-        // result.push(getTerminalMix(data));
 		return result;
-	// }
 }
 /***********************************/
 
@@ -40,6 +38,14 @@ function getTerminalMix(res) {
 		var statuslist=statusdata.datamap[statusdata.yearlist[index]];
 		var businesslist=businessdata.datamap[businessdata.yearlist[index]];
 		var businesscategory=[],statuscategory=[], typecategory=[],typevalue=[],statusvalue=[],businessvalue=[];
+		var businessNum=0;
+		var avgerrordays=0;
+		var yeardays;//某年(year)的天数
+		if(typedata.yearlist[index] % 4 == 0 && typedata.yearlist[index] % 100 != 0 || typedata.yearlist[index] % 400 == 0){//闰年的判断规则
+			yeardays=366;
+		}else {
+			yeardays = 365;
+		}
 		for(var i = 0; i < typelist.length; i++) {
 			if(i<10) {
 				typecategory.push(typelist[i].category);
@@ -51,17 +57,27 @@ function getTerminalMix(res) {
 			if(i<10) {
 				statuscategory.push(statuslist[i].category);
 				statusvalue.push(statuslist[i]);
-			}else break;
+			}
+			avgerrordays+=yeardays-statuslist[i].value;
 		}
+		avgerrordays=(avgerrordays/statuslist.length).toFixed(0);
+		console.log(avgerrordays);
 		for(var i = 0; i < businesslist.length; i++) {
 			if(i<10) {
 				businesscategory.push(businesslist[i].category);
 				businessvalue.push(businesslist[i]);
-			}else break;
+			}
+			businessNum+=businesslist[i].value;
 		}
 		// console.log(businessvalue);
 		yearlist.push(typedata.yearlist[index]+"年");
 		timeLineOptions.push({
+		 	typeNum:typelist.length,
+		 	businessNum:businessNum,
+			days:yeardays,
+			avgerrordays:avgerrordays,
+			terminalNum:businesslist.length,
+
 			title : {text: yearlist[index]},
 			legend: [
 					{
@@ -222,45 +238,6 @@ function getTerminalMix(res) {
 					data: businessvalue
 				},
 				{
-					name: '正常',
-					xAxisIndex:2,
-					yAxisIndex:2,
-					type: 'bar',
-					"stack": "总量",
-					"barMaxWidth": 35,
-					"barGap": "10%",
-					"itemStyle": {
-						"normal": {
-							"color": "rgba(0,191,183,1)",
-							"label": {
-								"show": true,
-								"textStyle": {
-									"color": "#fff"
-								},
-								"position": "insideTop",
-								formatter: function(p) {
-									return p.value > 0 ? (p.value) : '';
-								}
-							}
-						}
-					},
-					tooltip : {
-						trigger: 'item',
-						axisPointer : {            // 坐标轴指示器，坐标轴触发有效
-							type : 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
-						},
-						// formatter: '<span style="display:inline-block;width:10px;height:10px;border-radius:50%;background-color:#5793f3;margin-right:5px;"></span>{a}<br/>{b} : {c}'
-						formatter: function (params, ticket, callback) {
-							return  "网点名称："+params.data.branch_name +"<br>"
-								+"终端类型："+params.data.device_type+"<br>"
-								+"终端编号："+params.data.category+"<br>"
-								+params.seriesName+"天数:"+params.data.value;
-
-						}
-					},
-					data: statusvalue
-				},
-				{
 					name: '异常',
 					xAxisIndex:2,
 					yAxisIndex:2,
@@ -272,7 +249,10 @@ function getTerminalMix(res) {
 							"barBorderRadius": 0,
 							"label": {
 								"show": true,
-								"position": "top",
+								"textStyle": {
+									"color": "#fff"
+								},
+								"position": "insideTop",
 								formatter: function(p) {
 									return p.value > 0 ? (p.value) : '';
 								}
@@ -307,7 +287,44 @@ function getTerminalMix(res) {
 						result.value = days-item.value;
 						return result;
 					}),
-				}
+				},
+				{
+					name: '正常',
+					xAxisIndex:2,
+					yAxisIndex:2,
+					type: 'bar',
+					"stack": "总量",
+					"barMaxWidth": 35,
+					"barGap": "10%",
+					"itemStyle": {
+						"normal": {
+							"color": "rgba(0,191,183,1)",
+							"label": {
+								"show": true,
+								"position": "top",
+								formatter: function(p) {
+									return p.value > 0 ? (p.value) : '';
+								}
+							}
+						}
+					},
+					tooltip : {
+						trigger: 'item',
+						axisPointer : {            // 坐标轴指示器，坐标轴触发有效
+							type : 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
+						},
+						// formatter: '<span style="display:inline-block;width:10px;height:10px;border-radius:50%;background-color:#5793f3;margin-right:5px;"></span>{a}<br/>{b} : {c}'
+						formatter: function (params, ticket, callback) {
+							return  "网点名称："+params.data.branch_name +"<br>"
+								+"终端类型："+params.data.device_type+"<br>"
+								+"终端编号："+params.data.category+"<br>"
+								+params.seriesName+"天数:"+params.data.value;
+
+						}
+					},
+					data: statusvalue
+				},
+
 			]
 		});
 	}
@@ -330,7 +347,7 @@ function getTerminalMix(res) {
 			title: [
 					{
 						text: '用卡终端分析',
-						top:'90%',
+						top:'bottom',
 						left:'right',
 						textStyle: {
 							fontSize: 30,
@@ -348,7 +365,7 @@ function getTerminalMix(res) {
 						left:'left'
 					},
 					{
-						text: '终端正常工作天数TOP10',
+						text: '终端状态异常天数TOP10',
 						top:'middle',
 						left:'left'
 					},
@@ -413,6 +430,7 @@ function getTerminalMix(res) {
 				{
 					left: '70%',
 					width:'28%',
+					height:'80%',
 					containLabel: true
 				},
 				{
@@ -439,7 +457,8 @@ function getTerminalMix(res) {
 		},
 		options: timeLineOptions
 	};
-
+	terminalTimeLineOptions=timeLineOptions;
+	setConclusionAboutTerminal(0);
 	return option;
 }
 /**
@@ -482,12 +501,17 @@ function getTerminalTypeMix(res) {
 		}
 		yearlist.push(data.yearlist[index]+"年");
 		timeLineOptions.push({
+			sum:sum,
+			terminalModellist:terminalModellist,
 			title : [
-				{text: yearlist[index]+'全市各终端类型数量分布'},
+				{
+					text: yearlist[index]+'全市各终端类型数量分布',
+					// left:'center',
+				},
 				{
 					text: '各\n终\n端\n类\n型\n数\n量\n',
-					top:'20%',
-					right:'3%',
+					top:'15%',
+					right:'2%',
 					textBaseline:'middle',
 					textStyle: {
 						// fontSize: 30,
@@ -496,52 +520,11 @@ function getTerminalTypeMix(res) {
 					}
 				}
 			],
-			graphic: [
-				{
-					type: 'group',
-					// rotation: Math.PI / 4,
-					bounding: 'raw',
-					left: '3%',
-					top: '4%',
-					z: 100,
-					children: [
-						{
-							type: 'rect',
-							z: 100,
-							shape: {
-								width: 400,
-								height: 65
-							},
-							style: {
-								fill: 'rgba(0,0,0,0.3)',
-								// stroke: '#555',
-								lineWidth: 2,
-								shadowBlur: 8,
-								shadowOffsetX: 3,
-								shadowOffsetY: 3,
-								shadowColor: 'rgba(0,0,0,0.3)'
-							}
-						},
-						{
-							type: 'text',
-							left: 'left',
-							top: '7%',
-							z: 100,
-							style: {
-								fill: '#fff',
-								text: '全市终端共'+sum+'台，包括'+datalist.length+'种类型'+'\n' +
-								'类型数量前三分别为：\n1.'+categorylist[0]+' ('+datalist[0]+'台)'+'  2.'+categorylist[1]+' ('+datalist[1]+'台)'+'  3.'+categorylist[2]+' ('+datalist[2]+'台)',
-								font: '16px Microsoft YaHei'
-							}
-						}
-					]
-				}
-			],
 				legend: [
 				{
-					right: '7%',
-					top:'10%',
-					width:'6%',
+					left: 'right',
+					// top:'10%',
+					// width:'6%',
 					data: ['TOP1', 'TOP2','TOP3', 'TOP4','TOP5'],
 				}
 			],
@@ -578,11 +561,11 @@ function getTerminalTypeMix(res) {
 			],
 			grid: [
 					{
-						top:'13%',
+						top:'25%',
 						bottom:'13%',
 					left: '3%',
-					width:'65%',
-					containLabel: true
+					// width:'65%',
+					// containLabel: true
 					}
 				],
 			series: [
@@ -641,8 +624,8 @@ function getTerminalTypeMix(res) {
 				{
 					name:'TOP1',
 					type: 'pie',
-					center: [ '75%', '20%'],
-					radius: ['18%', '23%'],
+					center: [ '14%', '15%'],
+					radius: ['13%', '18%'],
 					label:  {
 						normal: {
 							position: 'center',
@@ -650,8 +633,8 @@ function getTerminalTypeMix(res) {
 								if (params.name == "other")
 									return "";
 								if(params.name.length>5)
-									return params.value + '\n' + params.name.substr(0,3)+'\n'+params.name.substring(3);
-								return params.value + '\n' + params.name;
+									return params.value + '台\n' + params.name.substr(0,3)+'\n'+params.name.substring(3);
+								return params.value + '台\n' + params.name;
 							},
 							textStyle: {
 								fontStyle: 'normal',
@@ -687,8 +670,8 @@ function getTerminalTypeMix(res) {
 				{
 					name:'TOP2',
 					type: 'pie',
-					center: [ '75%', '48%'],
-					radius: ['18%', '23%'],
+					center: [ '32%', '15%'],
+					radius: ['13%', '18%'],
 					tooltip : {
 						trigger: 'item',
 						axisPointer : {            // 坐标轴指示器，坐标轴触发有效
@@ -707,8 +690,8 @@ function getTerminalTypeMix(res) {
 								if (params.name == "other")
 									return "";
 								if(params.name.length>5)
-								return params.value + '\n' + params.name.substr(0,3)+'\n'+params.name.substring(3);
-								return params.value + '\n' + params.name;
+								return params.value + '台\n' + params.name.substr(0,3)+'\n'+params.name.substring(3);
+								return params.value + '台\n' + params.name;
 							},
 							textStyle: {
 								fontStyle: 'normal',
@@ -733,8 +716,8 @@ function getTerminalTypeMix(res) {
 				{
 					name:'TOP3',
 					type: 'pie',
-					center: [ '75%', '77%'],
-					radius: ['18%', '23%'],
+					center: [ '50%', '15%'],
+					radius: ['13%', '18%'],
 					tooltip : {
 						trigger: 'item',
 						axisPointer : {            // 坐标轴指示器，坐标轴触发有效
@@ -753,8 +736,8 @@ function getTerminalTypeMix(res) {
 								if (params.name == "other")
 									return "";
 								if(params.name.length>5)
-									return params.value + '\n' + params.name.substr(0,3)+'\n'+params.name.substring(3);
-								return params.value + '\n' + params.name;
+									return params.value + '台\n' + params.name.substr(0,3)+'\n'+params.name.substring(3);
+								return params.value + '台\n' + params.name;
 							},
 							textStyle: {
 								fontStyle: 'normal',
@@ -779,8 +762,8 @@ function getTerminalTypeMix(res) {
 				{
 					name:'TOP4',
 					type: 'pie',
-					center: [ '90%', '48%'],
-					radius: ['18%', '23%'],
+					center: [ '68%', '15%'],
+					radius: ['13%', '18%'],
 					tooltip : {
 						trigger: 'item',
 						axisPointer : {            // 坐标轴指示器，坐标轴触发有效
@@ -799,8 +782,8 @@ function getTerminalTypeMix(res) {
 								if (params.name == "other")
 									return "";
 								if(params.name.length>5)
-									return params.value + '\n' + params.name.substr(0,3)+'\n'+params.name.substring(3);
-								return params.value + '\n' + params.name;
+									return params.value + '台\n' + params.name.substr(0,3)+'\n'+params.name.substring(3);
+								return params.value + '台\n' + params.name;
 							},
 							textStyle: {
 								fontStyle: 'normal',
@@ -825,8 +808,8 @@ function getTerminalTypeMix(res) {
 				{
 					name:'TOP5',
 					type: 'pie',
-					center: [ '90%', '77%'],
-					radius: ['18%', '23%'],
+					center: [ '86%', '15%'],
+					radius: ['13%', '18%'],
 					tooltip : {
 						trigger: 'item',
 						axisPointer : {            // 坐标轴指示器，坐标轴触发有效
@@ -845,8 +828,8 @@ function getTerminalTypeMix(res) {
 								if (params.name == "other")
 									return "";
 								if(params.name.length>5)
-									return params.value + '\n' + params.name.substr(0,3)+'\n'+params.name.substring(3);
-								return params.value + '\n' + params.name;
+									return params.value + '台\n' + params.name.substr(0,3)+'\n'+params.name.substring(3);
+								return params.value + '台\n' + params.name;
 							},
 							textStyle: {
 								fontStyle: 'normal',
@@ -964,7 +947,8 @@ function getTerminalTypeMix(res) {
 		},
 		options: timeLineOptions
 	};
-
+	terminalTimeLineOptions=timeLineOptions;
+	setConclusionAboutType(0);
 	return option;
 }
 /**
@@ -982,17 +966,21 @@ function getTerminalBusinessNumMix(res) {
 	for(var index in data.yearlist) {
 		var terminalModellist=data.datamap[data.yearlist[index]];
 		var categorylist=[],datalist=[];
+		var sum=0;
 		for(var i = 0; i < terminalModellist.length; i++) {
 			if(i<10) {
 				// categorylist.push(fakenos[i]);
 				// datalist.push(Math.round(Math.random()*(100-10)+10));
 				categorylist.push(terminalModellist[i].category);
 				datalist.push(terminalModellist[i]);
-			}else break;
+			}
+			sum+=terminalModellist[i].value;
 		}
 		// datalist=datalist.sort(function (x,y) {return y-x;})
 		yearlist.push(data.yearlist[index]+"年");
 		timeLineOptions.push({
+			sum:sum,
+			terminalModellist:terminalModellist,
 			title : {text: yearlist[index]+'终端业务量TOP10'},
 			xAxis : [
 				{
@@ -1075,8 +1063,8 @@ function getTerminalBusinessNumMix(res) {
 					name: "终端业务量",
 					type: 'pie',
 					// roseType : 'area',
-					radius: ['10%', '30%'],
-					center: ['80%', '22%'],
+					radius: ['10%', '28%'],
+					center: ['78%', '24%'],
 					tooltip: {
 						trigger: 'item',
 						formatter: "{a} <br/>{b}: {c} ({d}%)"
@@ -1150,9 +1138,9 @@ function getTerminalBusinessNumMix(res) {
 			title: [{
 				text: '终端类型TOP10统计'
 			},{
-				text: '终\n端\n业\n务\n量\n占\n比',
-				top:'20%',
-				left:'63%',
+				text: '终端业务量占比',
+				top:'5%',
+				left:'75%',
 				textBaseline:'middle',
 				textStyle: {
 					// fontSize: 30,
@@ -1215,10 +1203,10 @@ function getTerminalBusinessNumMix(res) {
 				}
 			],
 			grid: {
-				left: '4%',
-				bottom: '20%',
+				left: '2%',
+				bottom: '15%',
 				// height:'80%',
-				// width:'58%',
+				width:'96%',
 				containLabel: true
 			},
 			calculable: true,
@@ -1230,7 +1218,8 @@ function getTerminalBusinessNumMix(res) {
 		},
 		options: timeLineOptions
 	};
-
+	terminalTimeLineOptions=timeLineOptions;
+	setConclusionAboutBusiness(0);
 	return option;
 }
 /**
@@ -1248,18 +1237,37 @@ function getTerminalStatusMix(res) {
 	for(var index in data.yearlist) {
 		var terminalModellist=data.datamap[data.yearlist[index]];
 		var categorylist=[],datalist=[];
+		var sumdays=0;
+		var errorsumdays=0;
+		var avgdays=0;
+		var erroravgdays=0;
+		var yeardays;//某年(year)的天数
+		if(data.yearlist[index] % 4 == 0 && data.yearlist[index] % 100 != 0 || data.yearlist[index] % 400 == 0){//闰年的判断规则
+			yeardays=366;
+		}else {
+			yeardays = 365;
+		}
 		for(var i = 0; i < terminalModellist.length; i++) {
 			if(i<10) {
 				// categorylist.push(fakenos[i]);
 				// datalist.push(Math.round(Math.random()*(365-100)+100) );
 				categorylist.push(terminalModellist[i].category);
 				datalist.push(terminalModellist[i]);
-			}else break;
+			}
+			sumdays+=terminalModellist[i].value;
+			errorsumdays+=yeardays-terminalModellist[i].value;
 		}
+		avgdays=(sumdays/terminalModellist.length).toFixed(0);
+		erroravgdays=(errorsumdays/terminalModellist.length).toFixed(0);
 		// datalist=datalist.sort(function (x,y) {return y-x;});
+		// console.log(index+''+yeardays);
 		yearlist.push(data.yearlist[index]+"年");
 		timeLineOptions.push({
-			title : {text: yearlist[index]+'终端工作状态TOP10'},
+			days:yeardays,
+			avgdays:avgdays,
+			erroravgdays:erroravgdays,
+			terminalModellist:terminalModellist,
+			title : {text: yearlist[index]+'终端状态异常天数TOP10'},
 			legend: [
 				{
 					left: 'center',
@@ -1582,5 +1590,296 @@ function getTerminalStatusMix(res) {
 		options: timeLineOptions
 	};
 
+	terminalTimeLineOptions=timeLineOptions;
+	setConclusionAboutStatus(0);
 	return option;
+}
+
+/**
+ * 根据类型刷新结论内容
+ * @param index
+ * @param type
+ */
+function setConclusion(index,type){
+	if(type === 'terminal') {
+		setConclusionAboutTerminal(index);
+	} else if(type === 'terminaltype') {
+		setConclusionAboutType(index);
+	} else if(type === 'terminalbusiness') {
+		setConclusionAboutBusiness(index);
+	} else if(type === 'terminalstatus') {
+		setConclusionAboutStatus(index);
+	}
+}
+/**
+ * 设置终端类型结论
+ * @param index
+ */
+function setConclusionAboutType(index){
+	var data=terminalTimeLineOptions[index];
+	var typeNum=data.terminalModellist.length;
+	var terminalNum=data.sum;
+	var typeList=data.terminalModellist;
+	var content='<ul>'+
+		'<li class="row">'+
+		'<div class="title"><h3><span class="top-left-arrow"></span>全市终端类型共有：<span class="bottom-right-arrow"></span></h3></div>'+
+		'<div class="itemlist">'+
+		'<div class="itemlist-item">'+
+		'<p class="item-top"><span></span></p>'+
+		'<p class="item-bottom">'+typeNum+'种</p>'+
+		'</div>'+
+		'</div>'+
+		'</li>'+
+		'<div class="clear"></div>'+
+		'<li class="row">'+
+		'<div class="title"><h3><span class="top-left-arrow"></span>全市终端数量共有：<span class="bottom-right-arrow"></span></h3></div>'+
+		'<div class="itemlist">'+
+		'<div class="itemlist-item">'+
+		'<p class="item-top"><span></span></p>'+
+		'<p class="item-bottom">'+terminalNum+'台</p>'+
+		'</div>'+
+		'</div>'+
+		'</li>'+
+		'<div class="clear"></div>'+
+		'<li class="row">'+
+		'<div class="title"><h3><span class="top-left-arrow"></span>终端类型数量排行榜<span class="bottom-right-arrow"></span></h3></div>'+
+		'<div class="content">'+
+		'<ul>';
+		for(var i=0; i< typeList.length;i++)
+		{
+		  content+='<li>' +
+		   '<div class="label-name">'+(i+1)+'.'+typeList[i].category+':</div>' +
+		   '<div class="counter">'+typeList[i].value+'台</div>' +
+		   '</li>' ;
+		}
+		content+='</li>'+
+		'</ul>'
+	$("#conclusion").empty();
+	$("#conclusion").append(content);
+}
+
+/**
+ * 设置终端业务量结论
+ * @param index
+ */
+function setConclusionAboutBusiness(index){
+	var data=terminalTimeLineOptions[index];
+	var businessSum=data.sum;
+	var terminalNum=data.terminalModellist.length;
+	var businessAvg=(businessSum/terminalNum).toFixed(0);
+	var typeList=data.terminalModellist;
+	var content='<ul>'+
+		'<li class="row">'+
+		'<div class="title"><h3><span class="top-left-arrow"></span>全市终端数量共有：<span class="bottom-right-arrow"></span></h3></div>'+
+		'<div class="itemlist">'+
+		'<div class="itemlist-item">'+
+		'<p class="item-top"><span></span></p>'+
+		'<p class="item-bottom">'+terminalNum+'台</p>'+
+		'</div>'+
+		'</div>'+
+		'</li>'+
+		'<div class="clear"></div>'+
+		'<li class="row">'+
+		'<div class="title"><h3><span class="top-left-arrow"></span>全市当年业务总量：<span class="bottom-right-arrow"></span></h3></div>'+
+		'<div class="itemlist">'+
+		'<div class="itemlist-item">'+
+		'<p class="item-top"><span></span></p>'+
+		'<p class="item-bottom">'+businessSum+'</p>'+
+		'</div>'+
+		'</div>'+
+		'</li>'+
+		'<div class="clear"></div>'+
+		'<li class="row">'+
+		'<div class="title"><h3><span class="top-left-arrow"></span>平均每台终端业务量：<span class="bottom-right-arrow"></span></h3></div>'+
+		'<div class="itemlist">'+
+		'<div class="itemlist-item">'+
+		'<p class="item-top"><span></span></p>'+
+		'<p class="item-bottom">'+businessAvg+'</p>'+
+		'</div>'+
+		'</div>'+
+		'</li>'+
+		'<div class="clear"></div>'+
+		'<li class="row">'+
+		'<div class="title"><h3><span class="top-left-arrow"></span>最高业务量终端<span class="bottom-right-arrow"></span></h3></div>'+
+		'<div class="content">'+
+		'<ul>'+
+		'<li>' +
+		'<div class="label-name">'+'位置:'+'</div>' +
+		'<div class="counter">'+typeList[0].branch_name+'</div>' +
+		'</li>'+
+		'<li>' +
+		'<div class="label-name">'+'编号:'+'</div>' +
+		'<div class="counter">'+typeList[0].category+'</div>' +
+		'</li>'+
+		'<li>' +
+		'<div class="label-name">'+'类型：'+'</div>' +
+		'<div class="counter">'+typeList[0].device_type+'</div>' +
+		'</li>' +
+
+		'<li>' +
+		'<div class="label-name">'+'业务量：'+'</div>' +
+		'<div class="counter">'+typeList[0].value+'</div>' +
+		'</li>'
+		;
+	content+='</li>'+
+		'</ul>'
+	$("#conclusion").empty();
+	$("#conclusion").append(content);
+}
+
+/**
+ * 设置终端工作状态结论
+ * @param index
+ */
+function setConclusionAboutStatus(index){
+	var data=terminalTimeLineOptions[index];
+	var avgdays=data.avgdays;
+	var days=data.days;
+
+	var terminalNum=data.terminalModellist.length;
+	var erroravgdays=data.erroravgdays;
+	var list=data.terminalModellist;
+	var content='<ul>'+
+			'<li class="row">'+
+			'<div class="title"><h3><span class="top-left-arrow"></span>全市终端数量共有：<span class="bottom-right-arrow"></span></h3></div>'+
+			'<div class="itemlist">'+
+			'<div class="itemlist-item">'+
+			'<p class="item-top"><span></span></p>'+
+			'<p class="item-bottom">'+terminalNum+'台</p>'+
+			'</div>'+
+			'</div>'+
+			'</li>'+
+			'<div class="clear"></div>'+
+			'<li class="row">'+
+			'<div class="title"><h3><span class="top-left-arrow"></span>平均故障发生率：<span class="bottom-right-arrow"></span></h3></div>'+
+			'<div class="itemlist">'+
+			'<div class="itemlist-item">'+
+			'<p class="item-top"><span></span></p>'+
+			'<p class="item-bottom">'+(erroravgdays/days*100).toFixed(2)+'%</p>'+
+			'</div>'+
+			'</div>'+
+			'</li>'+
+			'<div class="clear"></div>'+
+			'<li class="row">'+
+			'<div class="title"><h3><span class="top-left-arrow"></span>平均终端正常天数：<span class="bottom-right-arrow"></span></h3></div>'+
+			'<div class="itemlist">'+
+			'<div class="itemlist-item">'+
+			'<p class="item-top"><span></span></p>'+
+			'<p class="item-bottom">'+avgdays+'天</p>'+
+			'</div>'+
+			'</div>'+
+			'</li>'+
+			'<div class="clear"></div>'+
+			'<li class="row">'+
+			'<div class="title"><h3><span class="top-left-arrow"></span>平均终端异常天数：<span class="bottom-right-arrow"></span></h3></div>'+
+			'<div class="itemlist">'+
+			'<div class="itemlist-item">'+
+			'<p class="item-top"><span></span></p>'+
+			'<p class="item-bottom">'+erroravgdays+'天</p>'+
+			'</div>'+
+			'</div>'+
+			'</li>'+
+			'<div class="clear"></div>'+
+			'<li class="row">'+
+			'<div class="title"><h3><span class="top-left-arrow"></span>工作状态最差终端：<span class="bottom-right-arrow"></span></h3></div>'+
+			'<div class="content">'+
+			'<ul>'+
+			'<li>' +
+			'<div class="label-name">'+'位置:'+'</div>' +
+			'<div class="counter">'+list[0].branch_name+'</div>' +
+			'</li>'+
+			'<li>' +
+			'<div class="label-name">'+'编号:'+'</div>' +
+			'<div class="counter">'+list[0].category+'</div>' +
+			'</li>'+
+			'<li>' +
+			'<div class="label-name">'+'类型：'+'</div>' +
+			'<div class="counter">'+list[0].device_type+'</div>' +
+			'</li>' +
+			'<li>' +
+			'<div class="label-name">'+'故障率：'+'</div>' +
+			'<div class="counter">'+((days-list[0].value)/days*100).toFixed(2)+'%</div>' +
+			'</li>'+
+			// '<li>' +
+			// '<div class="label-name">'+'正常工作天数：'+'</div>' +
+			// '<div class="counter">'+list[0].value+'天</div>' +
+			// '</li>'+
+			'<li>' +
+			'<div class="label-name">'+'异常工作天数：'+'</div>' +
+			'<div class="counter">'+(days-list[0].value)+'天</div>' +
+			'</li>'
+		;
+	content+='</li>'+
+		'</ul>'
+	$("#conclusion").empty();
+	$("#conclusion").append(content);
+}
+
+/**
+ * 设置终端综合结论
+ * @param index
+ */
+function setConclusionAboutTerminal(index){
+	var data=terminalTimeLineOptions[index];
+	var typeNum=data.typeNum;
+	var terminalNum=data.terminalNum;
+	var businessNum=data.businessNum;
+	var avgbusinessNum=(businessNum/terminalNum).toFixed(0);
+	var days=data.days;
+	var erroravgrate=(data.avgerrordays/days*100).toFixed(2)+'%';
+	var content='<ul>'+
+			'<li class="row">'+
+			'<div class="title"><h3><span class="top-left-arrow"></span>全市终端数量共有：<span class="bottom-right-arrow"></span></h3></div>'+
+			'<div class="itemlist">'+
+			'<div class="itemlist-item">'+
+			'<p class="item-top"><span></span></p>'+
+			'<p class="item-bottom">'+terminalNum+'台</p>'+
+			'</div>'+
+			'</div>'+
+			'</li>'+
+			'<div class="clear"></div>'+
+			'<li class="row">'+
+			'<div class="title"><h3><span class="top-left-arrow"></span>全市终端类型共有：<span class="bottom-right-arrow"></span></h3></div>'+
+			'<div class="itemlist">'+
+			'<div class="itemlist-item">'+
+			'<p class="item-top"><span></span></p>'+
+			'<p class="item-bottom">'+typeNum+'种</p>'+
+			'</div>'+
+			'</div>'+
+			'</li>'+
+			'<div class="clear"></div>'+
+			'<li class="row">'+
+			'<div class="title"><h3><span class="top-left-arrow"></span>全市当年业务总量：<span class="bottom-right-arrow"></span></h3></div>'+
+			'<div class="itemlist">'+
+			'<div class="itemlist-item">'+
+			'<p class="item-top"><span></span></p>'+
+			'<p class="item-bottom">'+businessNum+'</p>'+
+			'</div>'+
+			'</div>'+
+			'</li>'+
+			'<div class="clear"></div>'+
+			'<li class="row">'+
+			'<div class="title"><h3><span class="top-left-arrow"></span>平均每台终端业务量：<span class="bottom-right-arrow"></span></h3></div>'+
+			'<div class="itemlist">'+
+			'<div class="itemlist-item">'+
+			'<p class="item-top"><span></span></p>'+
+			'<p class="item-bottom">'+avgbusinessNum+'</p>'+
+			'</div>'+
+			'</div>'+
+			'</li>'+
+			'<div class="clear"></div>'+
+			'<li class="row">'+
+			'<div class="title"><h3><span class="top-left-arrow"></span>平均故障发生率：<span class="bottom-right-arrow"></span></h3></div>'+
+			'<div class="itemlist">'+
+			'<div class="itemlist-item">'+
+			'<p class="item-top"><span></span></p>'+
+			'<p class="item-bottom">'+erroravgrate+'</p>'+
+			'</div>'+
+			'</div>'+
+			'</li>'
+		;
+	content+='</li>'+
+		'</ul>'
+	$("#conclusion").empty();
+	$("#conclusion").append(content);
 }

@@ -124,6 +124,10 @@ function handleCharts(data) {
 	// myChart3.setOption(option[2]);
 	// echarts.connect([myChart1,myChart2,myChart3]);
 	myChart.setOption(option[0]);
+	myChart.on('timelinechanged', function (params) {
+		// console.log(params);
+		setConclusion(params.currentIndex,chartType);
+	});
 	// myChart.setOption(eval('('+ option+')'));
 
 	hideLoading();
