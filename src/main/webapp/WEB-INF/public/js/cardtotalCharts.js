@@ -328,7 +328,7 @@ function getChart3(data){
                         show: true,
                         position:'inside',
                         formatter:function(params){
-                            return "Top"+(params.dataIndex+1)+" "+params.percent+'%';
+                            return "Top"+(params.dataIndex+1)+"\n"+params.percent+'%';
                         }                      
                     }
                 },                             
@@ -362,7 +362,15 @@ function getChart3(data){
                     type:'pie',
                     center:['50%','60%'],
                     radius: ['50%', '85%'],
-                    avoidLabelOverlap: false                    
+                    avoidLabelOverlap: true
+                    // labelLine: {
+                    //     normal: {
+                    //         // show: false,
+                    //         length:12,
+                    //         length2:4
+                    //
+                    //     }
+                    // },
                 }
             ]        
         },  
@@ -395,7 +403,7 @@ function getChart4(data){
                         show: true,
                         position:'inside',
                         formatter:function(params){
-                            return "Top"+(params.dataIndex+1)+" "+params.percent+'%';
+                            return "Top"+(params.dataIndex+1)+"\n"+params.percent+'%';
                         }                      
                     }
                 },                             
@@ -429,7 +437,7 @@ function getChart4(data){
                     type:'pie',
                     center:['50%','65%'],
                     radius: ['50%', '85%'],
-                    avoidLabelOverlap: true                    
+                    avoidLabelOverlap: true
                 }
             ]        
         },  
