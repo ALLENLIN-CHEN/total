@@ -1298,7 +1298,7 @@ function getTerminalStatusMix(res) {
 				position:'top',
 				axisLabel: {
 					show:true,
-					textStyle: {color:'#B2B2B2',fontSize:12,},
+					textStyle: {color:'#B2B2B2',fontSize:15,},
 				},
 				splitLine: {
 					show:true,
@@ -1324,7 +1324,7 @@ function getTerminalStatusMix(res) {
 						show:true,
 						textStyle: {
 							color:'#B2B2B2',
-							fontSize:12,},		        },
+							fontSize:15,},		        },
 					splitLine: {
 						show:true,
 						lineStyle:{

@@ -337,11 +337,12 @@ body{
     display:inline;
     height:40px;
     line-height:40px;
+    font-size:15px;
     /*float:left;*/
 }
 .counter{
     margin-left:5px;
-    /*font-size:15px;*/
+
     color:#f08080;
 }
 .clear{
