@@ -1,5 +1,11 @@
 var terminalTimeLineOptions;
-
+/**
+ * 页面大小调整，图表自适应
+ */
+window.onresize=function(){
+	// location=location
+	myChart.resize();
+};
 /**
  * 用于处理不同类型的图表
  */
@@ -61,7 +67,7 @@ function getTerminalMix(res) {
 			avgerrordays+=yeardays-statuslist[i].value;
 		}
 		avgerrordays=(avgerrordays/statuslist.length).toFixed(0);
-		console.log(avgerrordays);
+		// console.log(avgerrordays);
 		for(var i = 0; i < businesslist.length; i++) {
 			if(i<10) {
 				businesscategory.push(businesslist[i].category);
