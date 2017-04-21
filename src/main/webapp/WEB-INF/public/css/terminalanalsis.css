@@ -292,7 +292,7 @@ body{
     text-align:center;
     line-height:32px;
     font-weight:normal;
-    font-size:16px;
+    font-size:18px;
     color:#fff;
     display:inline-block;
     padding:0 36px;
@@ -337,13 +337,13 @@ body{
     display:inline;
     height:40px;
     line-height:40px;
-    font-size:15px;
+    font-size:18px;
     /*float:left;*/
 }
 .counter{
     margin-left:5px;
 
-    color:#f08080;
+    color:red;
 }
 .clear{
     width:0;
@@ -383,7 +383,7 @@ body{
     text-align:center;
     vertical-align:center;
     line-height:28px;
-    color:#fff;
+    color: red;
     font-size:28px;
 }
 .itemlist{
