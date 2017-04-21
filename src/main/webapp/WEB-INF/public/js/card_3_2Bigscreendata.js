@@ -166,20 +166,20 @@ function handleCharts(data) {
                     x: '53%',
                     y: '58%'
                 },],
-            legend:{
-                top:'80%',
-                formatter: function (name) {
-                    if(name==='男性')return '男';
-                    if(name==='女性')return '女';
-                    return name;
-                },
-                textStyle:{
-                    color:"white"
-                },
-                icon:"circle",
-                data:['人数','男性','女性']
-
-            },
+            // legend:{
+            //     top:'80%',
+            //     formatter: function (name) {
+            //         if(name==='男性')return '男';
+            //         if(name==='女性')return '女';
+            //         return name;
+            //     },
+            //     textStyle:{
+            //         color:"white"
+            //     },
+            //     icon:"circle",
+            //     data:['人数','男性','女性']
+            //
+            // },
             grid: [
                 {
                     x: '1%',
