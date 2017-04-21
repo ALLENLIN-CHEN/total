@@ -369,21 +369,35 @@ function getBar(data){
             return a.work - b.work;
         });        
         // 结论框统计信息
-        var netpointNum = 0;            //网点数   
-        var top1 = [];          //Top1网点信息
-        var low1 = [];          //Low1网点信息
+        var netpointNum = dataItem.length;            //网点数
+        var avgdays = 0;          //平均正常天数
+        var avgerrordays = 0;          //平均异常天数
 
         var categoryData = [];
         var barWorkData = [];
         var barNotWorkData = [];
-        for(var j=0;j<dataItem.length && j<10;j++){
-            categoryData.push(dataItem[j].name);      //获取网点名称
-            barWorkData.push(dataItem[j].work);       //获取正常工作天数
-            barNotWorkData.push(dataItem[j].notWork);    //获取非正常工作天数
-        }                
-        console.log(dataItem);
-        npOptions.push({"netpointNum":dataItem.length,"top1":{"name":dataItem[dataItem.length-1].name,"value":dataItem[dataItem.length-1].work},
-            "low1":{"name":dataItem[0].name,"value":dataItem[0].notWork}});
+        for(var j=0;j<dataItem.length;j++) {
+            if (j < 10){
+                categoryData.push(dataItem[j].name);      //获取网点名称
+                barWorkData.push(dataItem[j].work);       //获取正常工作天数
+                barNotWorkData.push(dataItem[j].notWork);    //获取非正常工作天数
+            }
+            avgdays+=dataItem[j].work;
+            avgerrordays+=dataItem[j].notWork;
+        }
+        avgdays/=netpointNum;
+        avgerrordays/=netpointNum;
+        // console.log(dataItem);
+        // npOptions.push({"netpointNum":dataItem.length,"top1":{"name":dataItem[dataItem.length-1].name,"value":dataItem[dataItem.length-1].work},
+        //     "low1":{"name":dataItem[0].name,"value":dataItem[0].notWork}});
+        npOptions.push(
+            {
+                netpointNum:netpointNum,
+                avgdays:avgdays,
+                avgerrordays:avgerrordays,
+                datalist:dataItem,
+            }
+        );
         timeLineOptions.push({
             title:{
                 text:years[i]+"年孝感市社保网点工作状态",                
@@ -844,11 +858,15 @@ function setNpConclusion1(index){
 function setNpConclusion2(index){
     var data=npOptions[index];
     var netpointNum = data.netpointNum;
-    var top1 = data.top1;
-    var low1 = data.low1;
+    var avgdays = data.avgdays.toFixed(0);
+    var avgerrordays = data.avgerrordays.toFixed(0);
+    var top1=data.datalist[0];
+    var low1=data.datalist[netpointNum-1];
+    var yeardays=top1.work+top1.notWork;
+    var avgerrorrate=(avgerrordays/(yeardays)*100).toFixed(2);
     var content='<ul>'+    
         '<li class="row">'+
-        '<div class="title"><h3><span class="top-left-arrow"></span>全市网点数<span class="bottom-right-arrow"></span></h3></div>'+
+        '<div class="title"><h3><span class="top-left-arrow"></span>全市网点数：<span class="bottom-right-arrow"></span></h3></div>'+
         '<div class="itemlist">'+
         '<div class="itemlist-item">'+
         '<p class="item-top"><span></span></p>'+
@@ -857,23 +875,54 @@ function setNpConclusion2(index){
         '</div>'+
         '</li>'+
         '<li class="row">'+
-        '<div class="title"><h3><span class="top-left-arrow"></span>正常工作网点TOP1<span class="bottom-right-arrow"></span></h3></div>'+
+        '<div class="title"><h3><span class="top-left-arrow"></span>平均网点故障率：<span class="bottom-right-arrow"></span></h3></div>'+
         '<div class="itemlist">'+
         '<div class="itemlist-item">'+
         '<p class="item-top"><span></span></p>'+
-        '<p class="item-bottom">'+top1.value+'天</p>'+
+        '<p class="item-bottom">'+avgerrorrate+'%</p>'+
         '</div>'+
         '</div>'+
-        '</li>'+      
+        '</li>'+
         '<li class="row">'+
-        '<div class="title"><h3><span class="top-left-arrow"></span>异常工作网点TOP1<span class="bottom-right-arrow"></span></h3></div>'+
+        '<div class="title"><h3><span class="top-left-arrow"></span>平均网点正常天数：<span class="bottom-right-arrow"></span></h3></div>'+
         '<div class="itemlist">'+
         '<div class="itemlist-item">'+
         '<p class="item-top"><span></span></p>'+
-        '<p class="item-bottom">'+low1.value+'天</p>'+
+        '<p class="item-bottom">'+avgdays+'天</p>'+
         '</div>'+
         '</div>'+
-        '</li>'+      
+        '</li>'+
+        '<li class="row">'+
+        '<div class="title"><h3><span class="top-left-arrow"></span>平均网点异常天数：<span class="bottom-right-arrow"></span></h3></div>'+
+        '<div class="itemlist">'+
+        '<div class="itemlist-item">'+
+        '<p class="item-top"><span></span></p>'+
+        '<p class="item-bottom">'+avgerrordays+'天</p>'+
+        '</div>'+
+        '</div>'+
+        '</li>'+
+    '<div class="clear"></div>'+
+    '<li class="row">'+
+    '<div class="title"><h3><span class="top-left-arrow"></span>工作状态最差网点<span class="bottom-right-arrow"></span></h3></div>'+
+    '<div class="content">'+
+    '<ul>'+
+    '<li>' +
+    '<div class="label-name">'+'名称:'+'</div>' +
+    '<div class="counter">'+top1.name+'</div>' +
+    '</li>'+
+    '<li>' +
+    '<div class="label-name">'+'位于:'+'</div>' +
+    '<div class="counter">'+top1.address+'</div>' +
+    '</li>'+
+    '<li>' +
+    '<div class="label-name">'+'故障率：'+'</div>' +
+    '<div class="counter">'+(top1.notWork/yeardays*100).toFixed(2)+'%</div>'+
+    '</li>'+
+    '<li>' +
+    '<div class="label-name">'+'异常天数：'+'</div>' +
+    '<div class="counter">'+top1.notWork+'</div>'+
+    '</li>'+
+    '</ul>';
     $("#conclusion").empty();
     $("#conclusion").append(content);
 }
@@ -915,12 +964,18 @@ function setNpConclusion3(index){
         '<div class="counter">'+top1.name+'</div>' +
         '</li>'+
         '<li>' +
-        '<div class="label-name">'+'地点:'+'</div>' +
+        '<div class="label-name">'+'位于:'+'</div>' +
         '<div class="counter">'+top1.address+'</div>' +
         '</li>'+
         '<li>' +
         '<div class="label-name">'+'业务量：'+'</div>' +
         '<div class="counter">'+top1.value+'</div>' +
+        '</li>'+
+        '<li>' +
+        '<div class="label-name">'+'占比：'+'</div>' +
+        '<div class="counter">'+(top1.value/businessSum*100).toFixed(2)+'%</div>'+
+        '</li>'+
+        '</ul>'+
         '<div class="clear"></div>'+
         '<li class="row">'+
         '<div class="title"><h3><span class="top-left-arrow"></span>最低业务量网点<span class="bottom-right-arrow"></span></h3></div>'+
@@ -931,15 +986,18 @@ function setNpConclusion3(index){
         '<div class="counter">'+low1.name+'</div>' +
         '</li>'+
         '<li>' +
-        '<div class="label-name">'+'地点:'+'</div>' +
+        '<div class="label-name">'+'位于:'+'</div>' +
         '<div class="counter">'+low1.address+'</div>' +
         '</li>'+
         '<li>' +
         '<div class="label-name">'+'业务量：'+'</div>' +
-        '<div class="counter">'+low1.value+'</div>';
-
-    content+='</li>'+
-        '</ul>'
+        '<div class="counter">'+low1.value+'</div>'+
+        '</li>'+
+        '<li>' +
+        '<div class="label-name">'+'占比：'+'</div>' +
+        '<div class="counter">'+(low1.value/businessSum*100).toFixed(2)+'%</div>'+
+        '</li>'+
+        '</ul>';
     $("#conclusion").empty();
     $("#conclusion").append(content);
 }
