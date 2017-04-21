@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.scut.mychart.mapper.Card_3_2Mapper">
+	<!-- 开启二级缓存 -->
+	<cache size="1024" readOnly="true" />
+	<select id="selectCard_3_2_1" parameterType="java.util.Map" resultType="org.scut.mychart.model.Card_3_2" statementType="STATEMENT">
+		select year(operation_time) as "year",
+		case when(operation_code>=105) then "劳动关系"
+		when(operation_code>=99) then "人事人才"
+		when(operation_code>=90) then "生育保险待遇业务"
+		when(operation_code>=84) then "失业保险待遇业务"
+		when(operation_code>=68) then "工伤保险待遇业务"
+		when(operation_code>=49) then "医疗保险待遇业务"
+		when(operation_code>=42) then "养老保险待遇业务"
+		when(operation_code>=32) then "社会保险公共业务"
+		else "就业" end as "type",
+		count(social_security_card) as "person_num"
+		from zdsj2
+		group by year,type
+		order by year,person_num DESC
+	</select>
+	<select id="selectCard_3_2_2" parameterType="java.util.Map" resultType="org.scut.mychart.model.Card_3_2" statementType="STATEMENT">
+		select year(operation_time) as "year",zdsj_dictionary.name as "type",
+		count(social_security_card) as "person_num"
+		from zdsj2 join zdsj_dictionary
+		on zdsj2.operation_code=zdsj_dictionary.id
+		group by year,type
+		order by year,person_num DESC
+	</select>
+	<select id="selectCard_3_3" parameterType="java.util.Map" resultType="org.scut.mychart.model.Card_3_2" statementType="STATEMENT">
+		select year(operation_time) as "year",
+		case when (year(operation_time)-year(birthday)>=66) then "66岁以上"
+		when (year(operation_time)-year(birthday)>=41) then "41岁--65岁"
+		when (year(operation_time)-year(birthday)>=19) then "19岁--40岁"
+		else "18岁以下" end as "age",
+		count(*) as "person_num"
+		from zdsj2 join person
+		on zdsj2.social_security_card=person.social_security_card
+		group by year,age
+		order by year,age
+	</select>
+	<select id="selectCard_3_4" parameterType="java.util.Map" resultType="org.scut.mychart.model.Card_3_2" statementType="STATEMENT">
+		select year(operation_time) as "year",
+		sex as "sex",
+		count(*) as "person_num"
+		from zdsj2 join person
+		on zdsj2.social_security_card=person.social_security_card
+		group by year,sex
+		order by year,sex
+	</select>
+</mapper>
