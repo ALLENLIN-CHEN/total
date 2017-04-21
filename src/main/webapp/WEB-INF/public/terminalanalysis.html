@@ -37,6 +37,13 @@
     <script type="text/javascript" src="js/analysis6.js"></script>
     <script type="text/javascript" src="js/analysis7.js"></script>
     <script type="text/javascript" src="js/analysis8.js"></script>
+
+    <!-- 引入 ECharts 文件 -->
+    <script src="js/echarts3.4.0/echarts.js"></script>  
+    <script src="js/xiaogan.js"></script>
+	<script type="text/javascript" src="js/npcharts.js"></script>		
+    <script type="text/javascript" src="js/terminalanalysischarts.js"></script>
+	<script type="text/javascript" src="js/terminalanalysis.js"></script>
 </head>
 <body >
 	<div class="navbar navbar-fixed-top navbar-inverse" >
@@ -102,25 +109,40 @@
 				<div class="sub-1 sub-item" style="display:block;">
 					<div class="sub-item-wrap">
 						<i class="icon"></i>
-						<div class="type" data-url="charts/terminal/getOption">用卡终端分析</div>
+						<div id="distribute" class="type" data-url="charts/netpoint/getTerminalAmount" 
+								data-type="npdistribute" data-index="1">社保网点分布</div>
+					</div>
+					<div class="sub-item-wrap">
+						<i class="icon"></i>
+						<div id="state" class="type" data-url="charts/netpoint/getWorkState" 
+								data-type="npstate" data-index="1">社保网点状态</div>
+					</div>
+					<div class="sub-item-wrap">
+						<i class="icon"></i>
+						<div id="use" class="type" data-url="charts/netpoint/getOperationAmount" 
+								data-type="npuse" data-index="1">网点终端使用情况</div>
+					</div>		
+					<div class="sub-item-wrap">
+						<i class="icon"></i>
+						<div class="type" data-url="charts/terminal/getOption" data-index="2">用卡终端分析</div>
 					</div>
 				</div>
 				<div class="sub-1 sub-item" style="display:block;">
 					<div class="sub-item-wrap">
 						<i class="icon"></i>
-						<div class="type" data-url="charts/terminal/getTypeOption">终端类型分析</div>
+						<div class="type" data-url="charts/terminal/getTypeOption" data-index="2">终端类型分析</div>
 					</div>
 				</div>
 				<div class="sub-1 sub-item" style="display:block;">
 					<div class="sub-item-wrap">
 						<i class="icon"></i>
-						<div class="type" data-url="charts/terminal/getBusinessOption">终端业务量分析</div>
+						<div class="type" data-url="charts/terminal/getBusinessOption" data-index="2">终端业务量分析</div>
 					</div>
 				</div>
 				<div class="sub-1 sub-item" style="display:block;">
 					<div class="sub-item-wrap">
 						<i class="icon"></i>
-						<div class="type" data-url="charts/terminal/getStatusOption">终端工作状态分析</div>
+						<div class="type" data-url="charts/terminal/getStatusOption" data-index="2">终端工作状态分析</div>
 					</div>
 				</div>
 			</div>
@@ -143,11 +165,6 @@
 		</div>
 
 		</div>
-	
-	<!-- 引入 ECharts 文件 -->
-    <script src="js/echarts3.4.0/echarts.js"></script>
-    <script type="text/javascript" src="js/terminalanalysischarts.js"></script>
-	<script type="text/javascript" src="js/terminalanalysis.js"></script>
 </body>
 
 </html>

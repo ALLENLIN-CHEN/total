@@ -224,10 +224,10 @@ body{
 }
 .chart7-conclusion{
 	top:770px;
-	left: 620px;
+	left: 640px;
 }
 .chart8-conclusion{
-	font-size: 4px;
+	/*font-size: 4px;*/
 	top:765px;
 	left: 1210px;
 	width: '100%'
@@ -236,8 +236,8 @@ body{
 /* 用于设置加载动画loading */
 .spinner {
   position: absolute;
-  left: 50%;
-  top: 80px;
+  left: 45%;
+  top: 35%;
   margin: 100px auto;
   width: 50px;
   height: 60px;
@@ -248,7 +248,7 @@ body{
 .spinner > div {
   background-color: #08c;
   height: 100%;
-  width: 6px;
+  width: 8.5%;
   display: inline-block;
    
   -webkit-animation: stretchdelay 1.2s infinite ease-in-out;

@@ -319,7 +319,7 @@ function getChart3(data){
        	
         for(var j=0;j<dataItem.length;j++){   
             categoryData.push(dataItem[j].name);
-            barData.push(dataItem[j].value);                       
+            barData.push(dataItem[j]);                       
         }                            
         timeLineOptions.push({   
             tooltip: {
@@ -393,7 +393,7 @@ function getChart4(data){
         
         for(var j=0;j<dataItem.length;j++){   //获取某一年的网点所对应的终端数，年份应该升序排好序                                             
             categoryData.push(dataItem[j].name);
-            barData.push(dataItem[j].value);                       
+            barData.push(dataItem[j]);                       
         }                            
         timeLineOptions.push({                                             
             series :[{                                     
@@ -616,19 +616,18 @@ function getChart6(data){
     // years = data.years;     
     for(var i=0;i<years.length;i++) {        
         var categoryData = [];
-        var lineData = [];                
-        // var dataItem = data[years[i]];        
+        var lineData = [];  
         var dataItem = data[i].sort(function(a,b){
-            return a.value - b.value;
-        });
-        
-        for(var j=dataItem.length-1;j>=0;j--){  
+            return b.value - a.value;
+        }).slice(0,10);        
+        for(var j=0;j<=dataItem.length-1;j++){  
             categoryData.push({
                 textStyle: {
                     fontSize: 1,
                     color: '#fff'
                 },
-                value:dataItem[j].name
+                // value:dataItem[j].name
+                value:dataItem[j].category
             });
             // lineData.push(dataItem[j].value);
             lineData.push({
@@ -699,10 +698,10 @@ function getChart6(data){
                 data:years
             },      
             grid:{                
-                top:'15%',
+                top:'20%',
                 left:"12%",
                 width:'90%',
-                height:'65%'
+                height:'60%'
             },
             xAxis:{
                 type:'category',                
@@ -740,7 +739,8 @@ function getChart6(data){
                 },
                 axisTick:{
                     show:false
-                }                   
+                },
+                scale:true                   
             },            
             tooltip: {
                 show:false
@@ -763,9 +763,9 @@ function getChart7(data){
         var bar2Data = [];
         var dataItem = data[i].sort(function(a,b){
             return b.value - a.value;
-        });
+        }).slice(0,10);
         for(var j=dataItem.length-1;j>=0;j--){   //获取某一年的网点所对应的终端数，年份应该升序排好序        
-            categoryData.push(dataItem[j].name);
+            categoryData.push(dataItem[j].category);
             barData.push(dataItem[j].value);   
             bar2Data.push(dataItem[0].value);
         }                    
@@ -783,7 +783,7 @@ function getChart7(data){
             }]
         });
     }    
-   
+    
     option = {
         //加入时间轴
         baseOption:{
@@ -871,54 +871,17 @@ function getChart7(data){
 /**
  * 全市社保终端工作状态统计:混搭
  */
-function getChart8(data) {
-    // var data=res.data;
-    // var timeLineOptions = [];
-    // var yearlist=[];
-    // for(var index in data.yearlist) {
-    //     var terminalModellist=data.datamap[data.yearlist[index]];
-    //     var categorylist=[],datalist=[];
-    //     for(var i = 0; i < terminalModellist.length; i++) {
-    //         if(i<10) {
-    //             categorylist.push(terminalModellist[i].category);
-    //             datalist.push(terminalModellist[i]);
-    //         }else break;
-    //     }
-    var timeLineOptions = [];    
-    // 年份        
-    // years = data.years;     
-    for(var i=0;i<years.length;i++) {        
-        // var dataItem = data[years[i]];          
-        var dataItem = data[i];
-        dataItem = dataItem.sort(function(a,b){
-            return b.notWork - a.notWork;
-        });        
-        var categoryData = [];
-        var barWorkData = [];
-        var barNotWorkData = [];
-        for(var j=0;j<dataItem.length;j++){
-            categoryData.push({
-                textStyle: {
-                    fontSize: 1,
-                    color: '#fff'
-                },
-                value:dataItem[j].name
-            });      //获取网点名称
-            barWorkData.push({
-                textStyle: {
-                    fontSize: 1,
-                    color: '#fff'
-                },
-                value:dataItem[j].work
-            });       //获取正常工作天数
-            barNotWorkData.push({
-                textStyle: {
-                    fontSize: 1,
-                    color: '#fff'
-                },
-                value:dataItem[j].notWork
-            });    //获取非正常工作天数
-        }                               
+function getChart8(res) {
+    var data=res.data;
+    var timeLineOptions = [];
+    var yearlist=[];    
+    for(var index in data.yearlist) {
+        var terminalModellist=data.datamap[data.yearlist[index]].slice(0,10);        
+        var categorylist=[],datalist=[];
+        for(var i = 0; i < terminalModellist.length; i++) {
+            categorylist.push(terminalModellist[i].category);
+            datalist.push(terminalModellist[i]);
+        }
         timeLineOptions.push({
             legend: [
                 {
@@ -941,7 +904,6 @@ function getChart8(data) {
             //             +"终端类型："+params[0].data.device_type+"<br>"
             //             +"终端编号："+params[0].data.category+"<br>"
             //             +params[0].seriesName+"天数:"+params[0].data.value;
-
             //     }
             // },
             xAxis:[
@@ -953,7 +915,7 @@ function getChart8(data) {
                 position:'top',
                 axisLabel: {
                     show:true,
-                    textStyle: {color:'#fff',fontSize:12,},
+                    textStyle: {color:'#B2B2B2',fontSize:12,},
                 },
                 splitLine: {
                     show:true,
@@ -972,13 +934,13 @@ function getChart8(data) {
                 {
                     gridIndex: 2,
                     type: 'value',
-                    axisLine: {show:false,},
-                    axisTick: {show:false,},
+                    axisLine: {show:false},
+                    axisTick: {show:false},
                     position:'top',
                     axisLabel: {
                         show:true,
                         textStyle: {
-                            color:'#fff',
+                            color:'#B2B2B2',
                             fontSize:12,},              },
                     splitLine: {
                         show:true,
@@ -1001,11 +963,11 @@ function getChart8(data) {
                             show:false,
                             margin:8,
                             textStyle: {
-                                color:'#ffffff',fontSize: 12,
+                                color:'#fff',fontSize: 12,
                             },
 
                         },
-                        data: categoryData,
+                        data: categorylist,
                     },
                     {
                         gridIndex: 1,
@@ -1018,12 +980,12 @@ function getChart8(data) {
                             show:true,
                             textStyle: {
                                 color:'#ffffff',
-                                fontSize: 10,
+                                fontSize: 12,
                                 align:'center',
                             },
 
                         },
-                        data:categoryData
+                        data:categorylist
                     },
                     {
                         gridIndex: 2,
@@ -1039,7 +1001,7 @@ function getChart8(data) {
                             },
 
                         },
-                        data:categoryData,
+                        data:categorylist,
                     },
                 ],
             grid:[
@@ -1053,7 +1015,7 @@ function getChart8(data) {
             },
                 {
                     show:false,
-                    left:'60%',
+                    left:'50%',
                     top:50,
                     bottom:30,
                     width:'4%',
@@ -1068,13 +1030,39 @@ function getChart8(data) {
                     width:'49%',
                     height:'89%'
                 },
-            ],
-            series: [
+            ],                
+            series: [                
+                {
+                    name:'正常',
+                    type: 'bar',
+                    barGap: 20,
+                    barWidth: 20,
+                    label: {
+                        normal: {
+                            show: true
+                        },
+                        emphasis: {
+                            show:true,
+                            position:'left',
+                            offset:[0,0],
+                            textStyle: {color: '#fff',fontSize: 14,},
+                        },
+                    },
+                    itemStyle: {
+                        normal: {
+                            color:'#659F83',
+                        },
+                        emphasis: {
+                            color:'#08C7AE',
+                        },
+                    },
+                    data: datalist
+                },
                 {
                     name:'异常',
                     type: 'bar',
-                    barGap: 40,
-                    barWidth:15,
+                    barGap: 20,
+                    barWidth:20,
                     xAxisIndex: 2,
                     yAxisIndex: 2,
                     label: {
@@ -1096,62 +1084,66 @@ function getChart8(data) {
                             color:'#F94646',
                         },
                     },
-                    data:barNotWorkData
-                },
-                {
-                    name:'正常',
-                    type: 'bar',
-                    barGap: 40,
-                    barWidth:15,
-                    label: {
-                        normal: {
-                            show: true
-                        },
-                        emphasis: {
-                            show:true,
-                            position:'left',
-                            offset:[0,0],
-                            textStyle: {color: '#fff',fontSize: 14,},
-                        },
-                    },
-                    itemStyle: {
-                        normal: {
-                            color:'#659F83',
-                        },
-                        emphasis: {
-                            color:'#08C7AE',
-                        },
-                    },
-                    data: barWorkData                    
+                    data:datalist.map(function (item) {
+                        var days;//某年(year)的天数
+                        if(item.year % 4 == 0 && item.year % 100 != 0 || item.year % 400 == 0){//闰年的判断规则
+                            days=366;
+                        }else {
+                            days = 365;
+                        }
+                        var result={};
+                        for (var key in item) {
+                            result[key] = item[key];
+                        }
+                        result.value = days-item.value;
+                        return result;
+                    }),
                 },
             ]
         });
     }
-
 
     var option = {
         baseOption: {
             timeline: {
                 show:false,              
                 data:years
+            },                        
+            toolbox: {
+                show:false,
+                feature: {
+                    // dataView: {readOnly: true},
+                    dataView : {
+                        show : true,
+                        title : '数据视图',
+                        readOnly: true,
+                        lang : ['数据视图', '关闭', '刷新'],
+                        // optionToContent: function(opt) {
+                        //  var industryModellist = opt.industryModellist;
+                        //  var table = '<div style="width:100%; height:100%; overflow:auto;"><table border="1px" align="left" cellspacing="0" cellpadding="0" style="width:600px;text-align:center;background:#ccccccc"><tbody><tr style="background:#1e90ff">'
+                        //      + '<td width="40px">No</td>'
+                        //      + '<td width="70px">终端类型</td>'
+                        //      + '<td width="70px">终端数量</td>'
+                        //      + '</tr>';
+                        //  for (var i = 0, l = industryModellist.length; i < l; i++) {
+                        //      table += '<tr>'
+                        //          + '<td>' + (i+1) + '</td>'
+                        //          + '<td>' + industryModellist[i].industry_code + '</td>'
+                        //          + '<td>' + industryModellist[i].cardinality + '</td>'
+                        //          + '</tr>';
+                        //  }
+                        //  table += '</tbody></table></div>';
+                        //  return table;
+                        // }
+                    },
+                    saveAsImage: {}
+                }
             },
-            // tooltip : {
-            //     trigger: 'axis',
-            //     axisPointer : {            // 坐标轴指示器，坐标轴触发有效
-            //         type : 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
-            //     },
-            //     // formatter: '<span style="display:inline-block;width:10px;height:10px;border-radius:50%;background-color:#5793f3;margin-right:5px;"></span>{a}<br/>{b} : {c}元'
-            // },
             yAxis : [
                 {
-                    type : 'category',
-
+                    type : 'category',                    
                     axisTick : {show: false},
                     inverse:true
-                    // axisLabel:{
-                    //   interval:0,
-                    //    rotate:30
-                    // }
                 }
             ],
             xAxis : [
@@ -1182,221 +1174,312 @@ function getChart8(data) {
 }
 
 
-// function getChart8(data){
-    
-//     var timeLineOptions = [];
+// function getChart8(data) {
+//     // var data=res.data;
+//     // var timeLineOptions = [];
+//     // var yearlist=[];
+//     // for(var index in data.yearlist) {
+//     //     var terminalModellist=data.datamap[data.yearlist[index]];
+//     //     var categorylist=[],datalist=[];
+//     //     for(var i = 0; i < terminalModellist.length; i++) {
+//     //         if(i<10) {
+//     //             categorylist.push(terminalModellist[i].category);
+//     //             datalist.push(terminalModellist[i]);
+//     //         }else break;
+//     //     }
+//     var timeLineOptions = [];    
 //     // 年份        
 //     // years = data.years;     
-//     // for(var i=0;i<years.length;i++) {        
-//     //     // var dataItem = data[years[i]];          
-//     //     var dataItem = data[i];
-//     //     dataItem = dataItem.sort(function(a,b){
-//     //         return b.work - a.work;
-//     //     });        
-//     //     var categoryData = [];
-//     //     var barWorkData = [];
-//     //     var barNotWorkData = [];
-//     //     for(var j=0;j<dataItem.length;j++){
-//     //         categoryData.push({
-//     //             textStyle: {
-//     //                 fontSize: 1,
-//     //                 color: '#fff'
-//     //             },
-//     //             value:dataItem[j].name
-//     //         });      //获取网点名称
-//     //         barWorkData.push({
-//     //             textStyle: {
-//     //                 fontSize: 1,
-//     //                 color: '#fff'
-//     //             },
-//     //             value:dataItem[j].work
-//     //         });       //获取正常工作天数
-//     //         barNotWorkData.push({
-//     //             textStyle: {
-//     //                 fontSize: 1,
-//     //                 color: '#fff'
-//     //             },
-//     //             value:dataItem[j].notWork
-//     //         });    //获取非正常工作天数
-//     //     }                
-//     //     timeLineOptions.push({                       
-//     //         series:{
-//     //             data:getData()
-//     //         }
-//     //     });
-//     // }    
-    
-//     function data(){
-//         var d = [];
-//         for (var i = 0; i < 10; i++) {
-//             d.push({name:i+'~'+(i+1),value:Math.random()*100});
-//         }
-//         d = d.sort(function(a,b){
-//             return b.value - a.value;
-//         })
-//         return d;
-//     }
+//     for(var i=0;i<years.length;i++) {        
+//         // var dataItem = data[years[i]];          
+//         var dataItem = data[i];
+//         dataItem = dataItem.sort(function(a,b){
+//             return b.notWork - a.notWork;
+//         });        
+//         var categoryData = [];
+//         var barWorkData = [];
+//         var barNotWorkData = [];
+//         for(var j=0;j<dataItem.length;j++){
+//             categoryData.push({
+//                 textStyle: {
+//                     fontSize: 1,
+//                     color: '#fff'
+//                 },
+//                 value:dataItem[j].name
+//             });      //获取网点名称
+//             barWorkData.push({
+//                 textStyle: {
+//                     fontSize: 1,
+//                     color: '#fff'
+//                 },
+//                 value:dataItem[j].work
+//             });       //获取正常工作天数
+//             barNotWorkData.push({
+//                 textStyle: {
+//                     fontSize: 1,
+//                     color: '#fff'
+//                 },
+//                 value:dataItem[j].notWork
+//             });    //获取非正常工作天数
+//         }                               
+//         timeLineOptions.push({
+//             legend: [
+//                 {
+//                     left: 'center',
+//                     top:'10%',
+//                     data: ['正常', '异常'],
+//                     textStyle:{
+//                         color:'#fff'
+//                     }
+//                 }
+//             ],
+//             // tooltip : {
+//             //     trigger: 'axis',
+//             //     axisPointer : {            // 坐标轴指示器，坐标轴触发有效
+//             //         type : 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
+//             //     },
+//             //     // formatter: '<span style="display:inline-block;width:10px;height:10px;border-radius:50%;background-color:#5793f3;margin-right:5px;"></span>{a}<br/>{b} : {c}'
+//             //     formatter: function (params, ticket, callback) {
+//             //         return  "网点名称："+params[0].data.branch_name +"<br>"
+//             //             +"终端类型："+params[0].data.device_type+"<br>"
+//             //             +"终端编号："+params[0].data.category+"<br>"
+//             //             +params[0].seriesName+"天数:"+params[0].data.value;
 
-//     option = {
-//         tooltip: {
-//             trigger: 'item',
-//             position: ['48.5%', '49.2%'],
-//             backgroundColor: 'rgba(50,50,50,0)',
-//             textStyle : {
-//                 color: 'yellow',
-//                 fontWeight: 'bold'
-//             },
-//             formatter: "{d}%"
-//         },
-//         series : [
-//             {
-//                 name: '上网时间',
-//                 type: 'pie',
-//                 radius : ['5%', '70%'],
-//                 roseType: 'area',
-//                 color:['#3fa7dc'],
-//                 data:data(),
-//                 labelLine: {
-//                     normal: {
-//                         show: false
-//                     }
-//                 },
-//                 label: {
-//                     normal: {
-//                         show: false
-//                     }
-//                 },
-//                 itemStyle: {
-//                     normal: {
-//                         shadowBlur: 10,
-//                         shadowOffsetX: 0,
-//                         shadowColor: 'rgba(0, 0, 0, 0.5)'
-//                     },
-//                     emphasis: {
-//                         shadowBlur: 10,
-//                         shadowOffsetX: 0,
-//                         shadowColor: 'rgba(0, 0, 0, 0.5)'
-//                     }
-//                 }
-//             },
-//             {
-//                 name: '',
-//                 type: 'gauge',
-//                 min: 1,
-//                 max: 10,
-//                 startAngle: 90,
-//                 endAngle: 449.9,
-//                 radius: '82%',
-//                 splitNumber: 10,
-//                 clockwise: false,
-//                 animation: false,
-//                 detail: {
-//                     formatter: '{value}',
-//                     textStyle: {
-//                         color: '#63869e'
-//                     }
-//                 },
-//                 detail:{
-//                     show: false
-//                 },
-//                 axisTick: {
-//                     show: false
-//                 },
-//                 axisLine: {
-//                     lineStyle: {
-//                         color: [
-//                             [0.25, '#63869e'],
-//                             [0.75, '#ffffff'],
-//                             [1, '#63869e']
-//                         ],
-//                         width: '40%',
-//                         shadowColor: '#0d4b81', //默认透明
-//                         shadowBlur: 40,
-//                         opacity: 1
-//                     }
-//                 },
-//                 splitLine: {
-//                     length: 5,
-//                     lineStyle: {
-//                         color: '#ffffff',
-//                         width: 2
-//                     }
-//                 },
+//             //     }
+//             // },
+//             xAxis:[
+//                 {
+//                 type: 'value',
+//                 inverse:true,
+//                 axisLine: {show:false,},
+//                 axisTick: {show:false,},
+//                 position:'top',
 //                 axisLabel: {
-//                     formatter: function(v){
-//                         return v?v:'';
-//                     },
-//                     textStyle: {
-//                         color: "red",
-//                         fontWeight: 700
-//                     }
-//                 },
-//                 itemStyle: {
-//                     normal: {
-//                         color: 'green',
-//                         width: 2
-//                     }
-//                 }
-//             },
-//             {
-//                 name: '',
-//                 type: 'gauge',
-//                 min: 1,
-//                 max: 10,
-//                 startAngle: 90,
-//                 endAngle: 449.9,
-//                 radius: '72%',
-//                 splitNumber: 10,
-//                 clockwise: false,
-//                 animation: false,
-//                 detail: {
-//                     formatter: '{value}',
-//                     textStyle: {
-//                         color: '#63869e'
-//                     }
-//                 },
-//                 detail:{
-//                     show: false
-//                 },
-//                 axisTick: {
-//                     show: false
-//                 },
-//                 axisLine: {
-//                     lineStyle: {
-//                         color: [
-//                             [1, '#E8E8E8']
-//                         ],
-//                         width: '10%',
-//                         opacity:0.8
-//                     }
+//                     show:true,
+//                     textStyle: {color:'#fff',fontSize:12,},
 //                 },
 //                 splitLine: {
 //                     show:true,
-//                     length: '92%',
-//                     lineStyle: {
-//                         color: 'grey',
-//                         width: '1'
-//                     }
-//                 },
-//                 axisLabel: {
-//                     show:false,
-//                     formatter: function(v){
-//                         return v?v:'';
+//                     lineStyle:{
+//                         // color:'#1F2022',
+//                         width: 1,
+//                         // type: 'solid',
+//                         type: 'dashed'
 //                     },
-//                     textStyle: {
-//                         color: "#fb5310",
-//                         fontWeight: 700
-//                     }
 //                 },
-//                 itemStyle: {
-//                     normal: {
-//                         color: 'green',
-//                         width: 2,
-//                         borderWidth: 3,
-//                     }
+//             },
+//                 {
+//                     gridIndex: 1,
+//                     show:false,
+//                 },
+//                 {
+//                     gridIndex: 2,
+//                     type: 'value',
+//                     axisLine: {show:false,},
+//                     axisTick: {show:false,},
+//                     position:'top',
+//                     axisLabel: {
+//                         show:true,
+//                         textStyle: {
+//                             color:'#fff',
+//                             fontSize:12,},              },
+//                     splitLine: {
+//                         show:true,
+//                         lineStyle:{
+//                             // color:'#1F2022',
+//                             width: 1,
+//                             type: 'dashed'
+//                         },
+//                     },
+//                 },
+//             ],
+//             yAxis: [
+//                     {
+//                         type: 'category',
+//                         inverse:true,
+//                         position:'right',
+//                         // axisLine: {show:false},
+//                         axisTick: {show:false},
+//                         axisLabel: {
+//                             show:false,
+//                             margin:8,
+//                             textStyle: {
+//                                 color:'#ffffff',fontSize: 12,
+//                             },
+
+//                         },
+//                         data: categoryData,
+//                     },
+//                     {
+//                         gridIndex: 1,
+//                         type: 'category',
+//                         inverse:true,
+//                         position:'left',
+//                         axisLine: {show:false},
+//                         axisTick: {show:false},
+//                         axisLabel: {
+//                             show:true,
+//                             textStyle: {
+//                                 color:'#ffffff',
+//                                 fontSize: 10,
+//                                 align:'center',
+//                             },
+
+//                         },
+//                         data:categoryData
+//                     },
+//                     {
+//                         gridIndex: 2,
+//                         type: 'category',
+//                         inverse:true,
+//                         position:'left',
+//                         // axisLine: {show:false},
+//                         axisTick: {show:false},
+//                         axisLabel: {
+//                             show:false,
+//                             textStyle: {
+//                                 color:'#ffffff',fontSize: 12,
+//                             },
+
+//                         },
+//                         data:categoryData,
+//                     },
+//                 ],
+//             grid:[
+//                 {
+//                 show:false,
+//                 left:'4%',
+//                 top:30,
+//                 bottom:30,
+//                 width:'49%',
+//                 height:'89%'
+//             },
+//                 {
+//                     show:false,
+//                     left:'60%',
+//                     top:50,
+//                     bottom:30,
+//                     width:'4%',
+//                     height:'82%'
+//                 },
+//                 {
+//                     show:false,
+//                     right:'4%',
+//                     top:30,
+//                     bottom:30,
+//                     containLabel: true,
+//                     width:'49%',
+//                     height:'89%'
+//                 },
+//             ],
+//             series: [
+//                 {
+//                     name:'异常',
+//                     type: 'bar',
+//                     barGap: 40,
+//                     barWidth:15,
+//                     xAxisIndex: 2,
+//                     yAxisIndex: 2,
+//                     label: {
+//                         normal: {
+//                             show:true,
+//                         },
+//                         emphasis: {
+//                             show:true,
+//                             position:'right',
+//                             offset:[0,0],
+//                             textStyle: {color: '#fff',fontSize: 14,},
+//                         },
+//                     },
+//                     itemStyle: {
+//                         normal: {
+//                             color:'#F68989',
+//                         },
+//                         emphasis: {
+//                             color:'#F94646',
+//                         },
+//                     },
+//                     data:barNotWorkData
+//                 },
+//                 {
+//                     name:'正常',
+//                     type: 'bar',
+//                     barGap: 40,
+//                     barWidth:15,
+//                     label: {
+//                         normal: {
+//                             show: true
+//                         },
+//                         emphasis: {
+//                             show:true,
+//                             position:'left',
+//                             offset:[0,0],
+//                             textStyle: {color: '#fff',fontSize: 14,},
+//                         },
+//                     },
+//                     itemStyle: {
+//                         normal: {
+//                             color:'#659F83',
+//                         },
+//                         emphasis: {
+//                             color:'#08C7AE',
+//                         },
+//                     },
+//                     data: barWorkData                    
+//                 },
+//             ]
+//         });
+//     }
+
+
+//     var option = {
+//         baseOption: {
+//             timeline: {
+//                 show:false,              
+//                 data:years
+//             },
+//             // tooltip : {
+//             //     trigger: 'axis',
+//             //     axisPointer : {            // 坐标轴指示器，坐标轴触发有效
+//             //         type : 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
+//             //     },
+//             //     // formatter: '<span style="display:inline-block;width:10px;height:10px;border-radius:50%;background-color:#5793f3;margin-right:5px;"></span>{a}<br/>{b} : {c}元'
+//             // },
+//             yAxis : [
+//                 {
+//                     type : 'category',
+
+//                     axisTick : {show: false},
+//                     inverse:true
+//                     // axisLabel:{
+//                     //   interval:0,
+//                     //    rotate:30
+//                     // }
 //                 }
-//             }
-//         ]
+//             ],
+//             xAxis : [
+//                 {
+//                     type : 'value',
+//                     position: 'top',
+//                     // scale: true,
+//                     splitLine: {show: false},
+//                 }
+//             ],
+//             grid: {
+//                 left: '2%',
+//                 right: '7%',
+//                 // width:'60%',
+//                 containLabel: true
+//             },
+//             calculable: true,
+//             series: [
+//                 {
+//                     type: 'bar'
+//                 }
+//             ]
+//         },
+//         options: timeLineOptions
 //     };
+
 //     return option;
 // }
