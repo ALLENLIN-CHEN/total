@@ -220,7 +220,7 @@
 	
   </dependencies>
   <build>
-    <finalName>mychart</finalName>
+    <finalName>total</finalName>
     <plugins>
     	<plugin>
         	<groupId>org.apache.maven.plugins</groupId>

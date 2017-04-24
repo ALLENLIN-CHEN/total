@@ -73,17 +73,17 @@ body{
 }
 
 .scut-container {
-	width: 100%;
-	margin: 100px auto 0 20px;
+	width: 80%;
+	margin: 100px auto 0 auto;
 	position: relative;
 }
 
 .left-content {
-	position: absolute;
-	width: 14%;
+	position: fixed;
+	width: 20%;
 	height: 500px;
-	/*margin-left: -4%;*/
-    min-width: 180px;
+	margin-left: -4%;
+    min-width: 196px;
 	/*border-radius: 6px;
 				box-shadow: 0 1px 4px rgba(0,0,0,.065);
 				border: 2px solid #E5E5E5;*/
@@ -166,10 +166,10 @@ body{
 }
 
 .right-content {
-	width: 85%;
+	width: 93%;
 	min-height: 100px;
 	position: absolute;
-	margin-left: 15%;
+	margin-left: 24%;
 }
 
 .right-content .company-wrap {
@@ -189,15 +189,15 @@ body{
 }
 
 .right-content .single #chartMain {
-	width: auto;
-    min-width: 76%;
+	width: 70%;
+    /*min-width: 76%;*/
 	/*height: 100%;*/
     float:left;
 }
 #chartMain {
-    /*width: 76%;*/
+    width: 76%;
     height: auto;
-    min-width: 800px;
+    /*min-width: 800px;*/
     min-height: 800px;
     float:left;
 }
@@ -280,7 +280,7 @@ body{
     margin-top: 4%;
     /*margin-right: 2px;*/
     width:22%;
-    min-width: 260px;
+    min-width: 280px;
     height:800px;
     /*display:inline-block;*/
     float:left;
@@ -345,7 +345,7 @@ body{
     display:inline;
     height:40px;
     line-height:40px;
-    font-size:18px;
+    font-size:15px;
     /*float:left;*/
 }
 .counter{
