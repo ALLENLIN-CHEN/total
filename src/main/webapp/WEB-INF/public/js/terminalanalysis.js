@@ -7,6 +7,8 @@ var chartType;
 var timer = null; //主要用于仪表盘等定时器的句柄，每当新的展示需要重置操作
 var isInit = true; //用于初始化处理单独显示的div宽高获取不到的情况
 var isAreaChange = false; //用于判断是否切换了地区
+var idx = 0;		//用于区分网点与终端
+var t;			//记录网点分析类型
 
 $(function() {
 	hideLoading();
@@ -79,6 +81,8 @@ $(function() {
 		}
 		//加载数据,显示图表
 		var url = $(this).data('url');
+		t = $('.sub-item-wrap.active .type').data('type');
+		idx = $(this).data('index');		
 		$.ajax({
 			type: 'GET',
 			url: url,
@@ -114,18 +118,26 @@ $(function() {
  */
 function handleCharts(data) {
 	$('.right-content .single').show();
-
-	chartType = data.type;
-
-	option = getCharts(data);
-	// console.log(option);
-	// myChart1.setOption(option[0]);
-	// myChart2.setOption(option[1]);
-	// myChart3.setOption(option[2]);
-	// echarts.connect([myChart1,myChart2,myChart3]);
-	myChart.setOption(option[0]);
+	if(idx === 1){		
+			if (t == 'npdistribute') {
+				showChart1(data);
+			} else if (t == 'npstate') {
+				showChart2(data);
+			} else if (t == 'npuse') {
+				showChart3(data);
+			}
+	}else if(idx === 2){
+		chartType = data.type;
+		option = getCharts(data);
+		// console.log(option);
+		// myChart1.setOption(option[0]);
+		// myChart2.setOption(option[1]);
+		// myChart3.setOption(option[2]);
+		// echarts.connect([myChart1,myChart2,myChart3]);
+		myChart.setOption(option[0]);
+	}
+	
 	myChart.on('timelinechanged', function (params) {
-		// console.log(params);
 		setConclusion(params.currentIndex,chartType);
 	});
 	// myChart.setOption(eval('('+ option+')'));

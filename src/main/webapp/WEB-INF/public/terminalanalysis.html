@@ -37,12 +37,19 @@
     <script type="text/javascript" src="js/analysis6.js"></script>
     <script type="text/javascript" src="js/analysis7.js"></script>
     <script type="text/javascript" src="js/analysis8.js"></script>
+
+    <!-- 引入 ECharts 文件 -->
+    <script src="js/echarts3.4.0/echarts.js"></script>  
+    <script src="js/xiaogan.js"></script>
+	<script type="text/javascript" src="js/npcharts.js"></script>		
+    <script type="text/javascript" src="js/terminalanalysischarts.js"></script>
+	<script type="text/javascript" src="js/terminalanalysis.js"></script>
 </head>
 <body >
 	<div class="navbar navbar-fixed-top navbar-inverse" >
-	    <div class="container">
-	        <a id="logo" href="/">社保大数据业务平台</a>
-	        <nav>
+		<div class="container" style="width: 1300px;">
+			<a id="logo" href="#">社保大数据业务平台</a>
+			<nav class="clearfix">
 	            <ul class="nav navbar-nav pull-right">
 	            	<li class="dropdown">
 	                	<a id="dLabel" data-target="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">用卡行为分析<span class="caret"></span></a>
@@ -55,6 +62,7 @@
 									<li><a href="/mychart/chartExpense.html">医疗费用报销业务分析</a></li>
 									<li><a href="/mychart/Tsyl.html">特殊医疗待遇业务分析</a></li>
 									<li><a href="/mychart/clinic.html">门诊统筹申请业务分析</a></li>
+									<li><a href="/total/terminalanalysis.html">社保网点与用卡终端分析</a></li>
 	                	</ul>
 	                </li>
 	                <li class="dropdown">
@@ -66,7 +74,24 @@
 									<li><a href="/company/difindex.html">企业员工参保基数统计分析</a></li>
 	                	</ul>
 	                </li>
-	                
+					<li class="dropdown">
+						<a id="dLabel" data-target="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">社会关系转移分析<span class="caret"></span></a>
+						<ul class="dropdown-menu multi-level" role="menu" aria-labelledby="dropdownMenu">
+							<li><a href="/social/staff.html">社会关系转移分析</a></li>
+							<li><a href="/social/map3d.html">柱状统计地图分析</a></li>
+						</ul>
+					</li>
+
+					<li class="dropdown">
+						<a id="dLabel" data-target="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">社医保药店分析<span class="caret"></span></a>
+						<ul class="dropdown-menu multi-level" role="menu" aria-labelledby="dropdownMenu">
+							<li><a href="/drugstore/dsindex.html">医保药店分析首页</a></li>
+							<li><a href="/drugstore/dslist.html">医保药店分析列表</a></li>
+						</ul>
+					</li>
+
+					<li><a href="/list/allList.html">社保数据列表展示</a></li>
+
 	                <li class="dropdown">
 	                	<a id="dLabel" data-target="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">业务综合分析<span class="caret"></span></a>
 	                	<ul class="dropdown-menu multi-level" role="menu" aria-labelledby="dropdownMenu">
@@ -74,9 +99,11 @@
 									<li><a href="/company/maptest.html" target="_blank">就医服务综合分析</a></li>
 									<li><a href="/company/bigscreenshow.html" target="_blank">企业员工参保基数综合分析</a></li>
 									<li><a href="/company/industrydisplay.html" target="_blank">各行业社保参保基数综合分析</a></li>
+									<li><a href="/social/ryldBigscreen.html" target="_blank">全国各城市人员流动综合分析</a></li>
+									<li><a href="/total/cardbigscreen.html" target="_blank">社保网点与终端综合分析</a></li>
+									<li><a href="/drugstore/bigscreends.html" target="_blank">医保药店综合分析</a></li>
 	                	</ul>
 	                </li>
-					<li><a href="/list/allList.html">社保数据列表展示</a></li>
 					<li><a href="/list/recommend.html" target="_blank">就业推荐</a></li>
 <!-- 	                <li><a href="https://rubytutorial-jungieve.c9users.io/">主页</a></li> -->
 <!-- 	                <li><a href="https://rubytutorial-jungieve.c9users.io/help">帮助</a></li> -->
@@ -102,25 +129,40 @@
 				<div class="sub-1 sub-item" style="display:block;">
 					<div class="sub-item-wrap">
 						<i class="icon"></i>
-						<div class="type" data-url="charts/terminal/getOption">用卡终端分析</div>
+						<div id="distribute" class="type" data-url="charts/netpoint/getTerminalAmount" 
+								data-type="npdistribute" data-index="1">社保网点分布</div>
+					</div>
+					<div class="sub-item-wrap">
+						<i class="icon"></i>
+						<div id="state" class="type" data-url="charts/netpoint/getWorkState" 
+								data-type="npstate" data-index="1">社保网点状态</div>
+					</div>
+					<div class="sub-item-wrap">
+						<i class="icon"></i>
+						<div id="use" class="type" data-url="charts/netpoint/getOperationAmount" 
+								data-type="npuse" data-index="1">网点业务量情况</div>
+					</div>		
+					<div class="sub-item-wrap">
+						<i class="icon"></i>
+						<div class="type" data-url="charts/terminal/getOption" data-index="2">用卡终端分析</div>
 					</div>
 				</div>
 				<div class="sub-1 sub-item" style="display:block;">
 					<div class="sub-item-wrap">
 						<i class="icon"></i>
-						<div class="type" data-url="charts/terminal/getTypeOption">终端类型分析</div>
+						<div class="type" data-url="charts/terminal/getTypeOption" data-index="2">终端类型分布</div>
 					</div>
 				</div>
 				<div class="sub-1 sub-item" style="display:block;">
 					<div class="sub-item-wrap">
 						<i class="icon"></i>
-						<div class="type" data-url="charts/terminal/getBusinessOption">终端业务量分析</div>
+						<div class="type" data-url="charts/terminal/getBusinessOption" data-index="2">终端业务量情况</div>
 					</div>
 				</div>
 				<div class="sub-1 sub-item" style="display:block;">
 					<div class="sub-item-wrap">
 						<i class="icon"></i>
-						<div class="type" data-url="charts/terminal/getStatusOption">终端工作状态分析</div>
+						<div class="type" data-url="charts/terminal/getStatusOption" data-index="2">终端工作状态</div>
 					</div>
 				</div>
 			</div>
@@ -143,11 +185,6 @@
 		</div>
 
 		</div>
-	
-	<!-- 引入 ECharts 文件 -->
-    <script src="js/echarts3.4.0/echarts.js"></script>
-    <script type="text/javascript" src="js/terminalanalysischarts.js"></script>
-	<script type="text/javascript" src="js/terminalanalysis.js"></script>
 </body>
 
 </html>

@@ -6,6 +6,7 @@ window.onresize=function(){
 	// location=location
 	myChart.resize();
 };
+
 /**
  * 用于处理不同类型的图表
  */
@@ -67,7 +68,6 @@ function getTerminalMix(res) {
 			avgerrordays+=yeardays-statuslist[i].value;
 		}
 		avgerrordays=(avgerrordays/statuslist.length).toFixed(0);
-		// console.log(avgerrordays);
 		for(var i = 0; i < businesslist.length; i++) {
 			if(i<10) {
 				businesscategory.push(businesslist[i].category);
@@ -1607,21 +1607,33 @@ function getTerminalStatusMix(res) {
  * @param type
  */
 function setConclusion(index,type){
-	if(type === 'terminal') {
-		setConclusionAboutTerminal(index);
-	} else if(type === 'terminaltype') {
-		setConclusionAboutType(index);
-	} else if(type === 'terminalbusiness') {
-		setConclusionAboutBusiness(index);
-	} else if(type === 'terminalstatus') {
-		setConclusionAboutStatus(index);
+	if(idx === 1){
+		if(t === 'npdistribute'){
+	        setNpConclusion1(index);
+	    }else if(t === 'npstate'){
+	        setNpConclusion2(index);
+	    }else if(t === 'npuse'){
+	        setNpConclusion3(index);
+	    }
+	}else if(idx === 2){
+		if(type === 'terminal') {
+			setConclusionAboutTerminal(index);
+		} else if(type === 'terminaltype') {			
+			setConclusionAboutType(index);
+		} else if(type === 'terminalbusiness') {
+			setConclusionAboutBusiness(index);
+		} else if(type === 'terminalstatus') {
+			setConclusionAboutStatus(index);
+		}
 	}
 }
+
+
 /**
  * 设置终端类型结论
  * @param index
  */
-function setConclusionAboutType(index){
+function setConclusionAboutType(index){	
 	var data=terminalTimeLineOptions[index];
 	var typeNum=data.terminalModellist.length;
 	var terminalNum=data.sum;

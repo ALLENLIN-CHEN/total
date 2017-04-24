@@ -1,6 +1,3 @@
-/**
- * 生成各图表的方法
- */
 // 网点经纬度
 var geoCoordMap = {
         "孝感市人社局社保大厅1楼":[113.93573439207124,30.927954784200963],
@@ -15,6 +12,7 @@ var geoCoordMap = {
 var option;
 var years = [];
 var geoCoordData;
+var npOptions = [];    
 
 var convertData = function (data) {
     var res = [];            
@@ -57,6 +55,29 @@ var convertData2 = function(data){
     return res;
 }
 
+ /**
+ * 渲染各图表
+ * 
+ * @returns
+ */
+function showChart1(res) {
+    myChart = echarts.init(document.getElementById('chartMain'));
+    option = getMap(res); // 获取option
+    myChart.setOption(option);
+}
+
+function showChart2(res) {
+    myChart = echarts.init(document.getElementById('chartMain'));
+    option = getBar(res); // 获取option
+    myChart.setOption(option);
+}
+
+function showChart3(res) {
+    myChart = echarts.init(document.getElementById('chartMain'));
+    option = getLine(res); // 获取option
+    myChart.setOption(option);
+}
+
 // 地址解析，返回经纬度
 function getCoorByAddress(address) {　　    
     var token = "clR7lmWlaguV9WUYKM7OGMbj";     //密钥
@@ -79,22 +100,29 @@ function getCoorByAddress(address) {　　
 
 function getMap(data){                              //data有年份，网点名称，网点地址，终端数量
     var timeLineOptions = [];
+    npOptions = [];
     // 年份        
     years = data.years;     
     for(var i=0;i<years.length;i++)	{        
         var categoryData = [];
         var barData = [];                
-        var dataItem = data[years[i]];        
-        geoCoordData = [];
+        var dataItem = data[years[i]];   
+        // 结论框统计信息
+        var netpointNum = 0;            //网点数
+        var terminalNum = 0;            //终端数    
+        var list = [];                  //排行榜
+        geoCoordData = [];              
         $.ajaxSettings.async = false;
         
         for(var j=dataItem.length-1;j>=0;j--){   //获取某一年的网点所对应的终端数，年份应该升序排好序        
             var name = dataItem[j].address;            
             getCoorByAddress(dataItem[j].address);            
             categoryData.push(j+1+": "+dataItem[j].name);
-            barData.push(dataItem[j].value);                       
-        }                    
-        // console.log(geoCoordData);            
+            barData.push(dataItem[j].value);                   
+            terminalNum += dataItem[j].value;
+            list.push({name:dataItem[dataItem.length-j-1].name,value:dataItem[dataItem.length-j-1].value});    
+        }  
+        npOptions.push({'netpointNum':dataItem.length,'terminalNum':terminalNum,'rank':list})                                  
         timeLineOptions.push({
             title:{
                 text:years[i]+'年孝感市社保网点分布'
@@ -190,20 +218,20 @@ function getMap(data){                              //data有年份，网点名�
                     }
                 }
             },
-            /*brush: {
-                outOfBrush: {
-                    color: '#abc'
-                },
-                brushStyle: {
-                    borderWidth: 2,
-                    color: 'rgba(0,0,0,0.2)',
-                    borderColor: 'rgba(0,0,0,0.5)',
-                },
-                seriesIndex: [0, 1],
-                throttleType: 'debounce',
-                throttleDelay: 300,
-                geoIndex: 0
-            },*/
+            // brush: {
+            //     outOfBrush: {
+            //         color: '#abc'
+            //     },
+            //     brushStyle: {
+            //         borderWidth: 2,
+            //         color: 'rgba(0,0,0,0.2)',
+            //         borderColor: 'rgba(0,0,0,0.5)',
+            //     },
+            //     seriesIndex: [0, 1],
+            //     throttleType: 'debounce',
+            //     throttleDelay: 300,
+            //     geoIndex: 0
+            // },
             geo: {
                 map: 'xiaogan',
                 top:'70%',
@@ -326,11 +354,13 @@ function getMap(data){                              //data有年份，网点名�
         },  
         options:timeLineOptions
         };
-        return option;
+    setNpConclusion1(0);
+    return option;
 }
 
-function getBar(data){    
-    var timeLineOptions = [];    
+function getBar(data){   
+    var timeLineOptions = []; 
+    npOptions = [];
     // 年份        
     years = data.years;     
     for(var i=0;i<years.length;i++) {        
@@ -338,14 +368,36 @@ function getBar(data){
         dataItem = dataItem.sort(function(a,b){
             return a.work - b.work;
         });        
+        // 结论框统计信息
+        var netpointNum = dataItem.length;            //网点数
+        var avgdays = 0;          //平均正常天数
+        var avgerrordays = 0;          //平均异常天数
+
         var categoryData = [];
         var barWorkData = [];
         var barNotWorkData = [];
-        for(var j=0;j<dataItem.length;j++){
-            categoryData.push(dataItem[j].name);      //获取网点名称
-            barWorkData.push(dataItem[j].work);       //获取正常工作天数
-            barNotWorkData.push(dataItem[j].notWork);    //获取非正常工作天数
-        }                
+        for(var j=0;j<dataItem.length;j++) {
+            if (j < 10){
+                categoryData.push(dataItem[j].name);      //获取网点名称
+                barWorkData.push(dataItem[j].work);       //获取正常工作天数
+                barNotWorkData.push(dataItem[j].notWork);    //获取非正常工作天数
+            }
+            avgdays+=dataItem[j].work;
+            avgerrordays+=dataItem[j].notWork;
+        }
+        avgdays/=netpointNum;
+        avgerrordays/=netpointNum;
+        // console.log(dataItem);
+        // npOptions.push({"netpointNum":dataItem.length,"top1":{"name":dataItem[dataItem.length-1].name,"value":dataItem[dataItem.length-1].work},
+        //     "low1":{"name":dataItem[0].name,"value":dataItem[0].notWork}});
+        npOptions.push(
+            {
+                netpointNum:netpointNum,
+                avgdays:avgdays,
+                avgerrordays:avgerrordays,
+                datalist:dataItem,
+            }
+        );
         timeLineOptions.push({
             title:{
                 text:years[i]+"年孝感市社保网点工作状态",                
@@ -584,12 +636,14 @@ function getBar(data){
         },
         options:timeLineOptions
     };    
+    setNpConclusion2(0);
     return option;     
 }
 
 function getLine(data){
     var timeLineOptions = [];
-     // 年份        
+    npOptions = [];    
+    // 年份        
     years = data.years;     
     for(var i=0;i<years.length;i++){        
         var dataItem = data[years[i]];
@@ -600,11 +654,19 @@ function getLine(data){
         var operationData = [];
         var addressData = [];
         var tipData = [];
+
+        // 结论框统计信息
+        var sum = 0;            //总业务量   
+        var average;       //平均业务量
+        
         for(var j=0;j<dataItem.length;j++){
             categoryData.push(dataItem[j].name);      //获取网点名称
             addressData.push(dataItem[j].address);      //获取网点地址
-            operationData.push(dataItem[j].value);        
+            operationData.push(dataItem[j].value); 
+            sum += dataItem[j].value;       
         }                        
+        average = (sum/dataItem.length).toFixed(0);
+        npOptions.push({sum:sum,average:average,top1:dataItem[0],low1:dataItem[dataItem.length-1]});
         timeLineOptions.push({
             title:{
                 text:years[i]+"年孝感市社保网点业务量Top10",                
@@ -745,5 +807,197 @@ function getLine(data){
         },
         options:timeLineOptions
     };
+    setNpConclusion3(0);
     return option;        
+}
+
+// 设置结论
+function setNpConclusion1(index){
+    var data=npOptions[index];
+    var netpointNum = data.netpointNum;
+    var terminalNum = data.terminalNum;
+    var rank = data.rank;
+    var content='<ul>'+
+        '<li class="row">'+
+        '<div class="title"><h3><span class="top-left-arrow"></span>全市网点数：<span class="bottom-right-arrow"></span></h3></div>'+
+        '<div class="itemlist">'+
+        '<div class="itemlist-item">'+
+        '<p class="item-top"><span></span></p>'+
+        '<p class="item-bottom">'+netpointNum+'个</p>'+
+        '</div>'+
+        '</div>'+
+        '</li>'+
+        '<div class="clear"></div>'+
+        '<li class="row">'+
+        '<div class="title"><h3><span class="top-left-arrow"></span>全市终端数量共有：<span class="bottom-right-arrow"></span></h3></div>'+
+        '<div class="itemlist">'+
+        '<div class="itemlist-item">'+
+        '<p class="item-top"><span></span></p>'+
+        '<p class="item-bottom">'+terminalNum+'台</p>'+
+        '</div>'+
+        '</div>'+
+        '</li>'+
+        '<div class="clear"></div>'+
+        '<li class="row">'+
+        '<div class="title"><h3><span class="top-left-arrow"></span>网点终端数量排行榜<span class="bottom-right-arrow"></span></h3></div>'+
+        '<div class="content">'+
+        '<ul>';
+        for(var i=0; i< rank.length;i++)
+        {
+          content+='<li>' +
+           '<div class="label-name">'+(i+1)+'.'+rank[i].name+':</div>' +
+           '<div class="counter">'+rank[i].value+'台</div>' +
+           '</li>' ;
+        }
+        content+='</li>'+
+        '</ul>'
+    $("#conclusion").empty();
+    $("#conclusion").append(content);
+}
+
+function setNpConclusion2(index){
+    var data=npOptions[index];
+    var netpointNum = data.netpointNum;
+    var avgdays = data.avgdays.toFixed(0);
+    var avgerrordays = data.avgerrordays.toFixed(0);
+    var top1=data.datalist[0];
+    var low1=data.datalist[netpointNum-1];
+    var yeardays=top1.work+top1.notWork;
+    var avgerrorrate=(avgerrordays/(yeardays)*100).toFixed(2);
+    var content='<ul>'+    
+        '<li class="row">'+
+        '<div class="title"><h3><span class="top-left-arrow"></span>全市网点数：<span class="bottom-right-arrow"></span></h3></div>'+
+        '<div class="itemlist">'+
+        '<div class="itemlist-item">'+
+        '<p class="item-top"><span></span></p>'+
+        '<p class="item-bottom">'+netpointNum+'个</p>'+
+        '</div>'+
+        '</div>'+
+        '</li>'+
+        '<li class="row">'+
+        '<div class="title"><h3><span class="top-left-arrow"></span>平均网点故障率：<span class="bottom-right-arrow"></span></h3></div>'+
+        '<div class="itemlist">'+
+        '<div class="itemlist-item">'+
+        '<p class="item-top"><span></span></p>'+
+        '<p class="item-bottom">'+avgerrorrate+'%</p>'+
+        '</div>'+
+        '</div>'+
+        '</li>'+
+        '<li class="row">'+
+        '<div class="title"><h3><span class="top-left-arrow"></span>平均网点正常天数：<span class="bottom-right-arrow"></span></h3></div>'+
+        '<div class="itemlist">'+
+        '<div class="itemlist-item">'+
+        '<p class="item-top"><span></span></p>'+
+        '<p class="item-bottom">'+avgdays+'天</p>'+
+        '</div>'+
+        '</div>'+
+        '</li>'+
+        '<li class="row">'+
+        '<div class="title"><h3><span class="top-left-arrow"></span>平均网点异常天数：<span class="bottom-right-arrow"></span></h3></div>'+
+        '<div class="itemlist">'+
+        '<div class="itemlist-item">'+
+        '<p class="item-top"><span></span></p>'+
+        '<p class="item-bottom">'+avgerrordays+'天</p>'+
+        '</div>'+
+        '</div>'+
+        '</li>'+
+    '<div class="clear"></div>'+
+    '<li class="row">'+
+    '<div class="title"><h3><span class="top-left-arrow"></span>工作状态最差网点<span class="bottom-right-arrow"></span></h3></div>'+
+    '<div class="content">'+
+    '<ul>'+
+    '<li>' +
+    '<div class="label-name">'+'名称:'+'</div>' +
+    '<div class="counter">'+top1.name+'</div>' +
+    '</li>'+
+    '<li>' +
+    '<div class="label-name">'+'位于:'+'</div>' +
+    '<div class="counter">'+top1.address+'</div>' +
+    '</li>'+
+    '<li>' +
+    '<div class="label-name">'+'故障率：'+'</div>' +
+    '<div class="counter">'+(top1.notWork/yeardays*100).toFixed(2)+'%</div>'+
+    '</li>'+
+    '<li>' +
+    '<div class="label-name">'+'异常天数：'+'</div>' +
+    '<div class="counter">'+top1.notWork+'</div>'+
+    '</li>'+
+    '</ul>';
+    $("#conclusion").empty();
+    $("#conclusion").append(content);
+}
+
+function setNpConclusion3(index){
+    var data=npOptions[index];
+    var businessSum=data.sum;
+    var businessAvg=data.average;
+    var top1 = data.top1;
+    var low1 = data.low1;
+    var content='<ul>'+        
+        '<div class="clear"></div>'+
+        '<li class="row">'+
+        '<div class="title"><h3><span class="top-left-arrow"></span>全市网点总业务量：<span class="bottom-right-arrow"></span></h3></div>'+
+        '<div class="itemlist">'+
+        '<div class="itemlist-item">'+
+        '<p class="item-top"><span></span></p>'+
+        '<p class="item-bottom">'+businessSum+'</p>'+
+        '</div>'+
+        '</div>'+
+        '</li>'+
+        '<div class="clear"></div>'+
+        '<li class="row">'+
+        '<div class="title"><h3><span class="top-left-arrow"></span>网点平均业务量：<span class="bottom-right-arrow"></span></h3></div>'+
+        '<div class="itemlist">'+
+        '<div class="itemlist-item">'+
+        '<p class="item-top"><span></span></p>'+
+        '<p class="item-bottom">'+businessAvg+'</p>'+
+        '</div>'+
+        '</div>'+
+        '</li>'+
+        '<div class="clear"></div>'+
+        '<li class="row">'+
+        '<div class="title"><h3><span class="top-left-arrow"></span>最高业务量网点<span class="bottom-right-arrow"></span></h3></div>'+
+        '<div class="content">'+
+        '<ul>'+
+        '<li>' +
+        '<div class="label-name">'+'名称:'+'</div>' +
+        '<div class="counter">'+top1.name+'</div>' +
+        '</li>'+
+        '<li>' +
+        '<div class="label-name">'+'位于:'+'</div>' +
+        '<div class="counter">'+top1.address+'</div>' +
+        '</li>'+
+        '<li>' +
+        '<div class="label-name">'+'业务量：'+'</div>' +
+        '<div class="counter">'+top1.value+'</div>' +
+        '</li>'+
+        '<li>' +
+        '<div class="label-name">'+'占比：'+'</div>' +
+        '<div class="counter">'+(top1.value/businessSum*100).toFixed(2)+'%</div>'+
+        '</li>'+
+        '</ul>'+
+        '<div class="clear"></div>'+
+        '<li class="row">'+
+        '<div class="title"><h3><span class="top-left-arrow"></span>最低业务量网点<span class="bottom-right-arrow"></span></h3></div>'+
+        '<div class="content">'+
+        '<ul>'+
+        '<li>' +
+        '<div class="label-name">'+'名称:'+'</div>' +
+        '<div class="counter">'+low1.name+'</div>' +
+        '</li>'+
+        '<li>' +
+        '<div class="label-name">'+'位于:'+'</div>' +
+        '<div class="counter">'+low1.address+'</div>' +
+        '</li>'+
+        '<li>' +
+        '<div class="label-name">'+'业务量：'+'</div>' +
+        '<div class="counter">'+low1.value+'</div>'+
+        '</li>'+
+        '<li>' +
+        '<div class="label-name">'+'占比：'+'</div>' +
+        '<div class="counter">'+(low1.value/businessSum*100).toFixed(2)+'%</div>'+
+        '</li>'+
+        '</ul>';
+    $("#conclusion").empty();
+    $("#conclusion").append(content);
 }
